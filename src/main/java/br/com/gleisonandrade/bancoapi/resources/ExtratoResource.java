@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.gleisonandrade.bancoapi.domain.Agencia;
-import br.com.gleisonandrade.bancoapi.services.AgenciaService;
+import br.com.gleisonandrade.bancoapi.domain.Extrato;
+import br.com.gleisonandrade.bancoapi.services.ExtratoService;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -28,20 +28,20 @@ import br.com.gleisonandrade.bancoapi.services.AgenciaService;
  */
 
 @RestController
-@RequestMapping("/extrato-api/extrato")
+@RequestMapping("/banco-api/extrato")
 public class ExtratoResource {
 	@Autowired
-	private AgenciaService extratoService;
+	private ExtratoService extratoService;
 
 	@GetMapping
-	public ResponseEntity<List<Agencia>> listar() {
-		List<Agencia> extratos = extratoService.listarTodos();
+	public ResponseEntity<List<Extrato>> listar() {
+		List<Extrato> extratos = extratoService.listarTodos();
 		return ResponseEntity.ok(extratos);
 	}
 
 	@GetMapping(path = "/{id}")
-	public ResponseEntity<Agencia> buscar(@PathVariable Long id) {
-		Agencia extratoBuscado = extratoService.buscar(id);
+	public ResponseEntity<Extrato> buscar(@PathVariable Long id) {
+		Extrato extratoBuscado = extratoService.buscar(id);
 
 		if (extratoBuscado == null) {
 			return ResponseEntity.notFound().build();
@@ -51,14 +51,14 @@ public class ExtratoResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<Agencia> adicionar(@Valid @RequestBody Agencia extrato) {
-		Agencia extratoCadastrada = extratoService.salvarOuAtualizar(extrato);
+	public ResponseEntity<Extrato> adicionar(@Valid @RequestBody Extrato extrato) {
+		Extrato extratoCadastrada = extratoService.salvarOuAtualizar(extrato);
 		return ResponseEntity.ok(extratoCadastrada);
 	}
 
 	@PutMapping(path = "/{id}")
-	public ResponseEntity<Agencia> atualizar(@PathVariable Long id, @Valid @RequestBody Agencia extrato) {
-		Agencia extratoBuscada = extratoService.buscar(id);
+	public ResponseEntity<Extrato> atualizar(@PathVariable Long id, @Valid @RequestBody Extrato extrato) {
+		Extrato extratoBuscada = extratoService.buscar(id);
 
 		if (extratoBuscada == null) {
 			return ResponseEntity.notFound().build();
@@ -71,7 +71,7 @@ public class ExtratoResource {
 
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
-		Agencia extratoBuscada = extratoService.buscar(id);
+		Extrato extratoBuscada = extratoService.buscar(id);
 
 		if (extratoBuscada == null) {
 			return ResponseEntity.notFound().build();

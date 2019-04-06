@@ -24,7 +24,7 @@ import br.com.gleisonandrade.bancoapi.services.AgenciaService;
  *
  */
 @RestController
-@RequestMapping("/agencia-api/agencia")
+@RequestMapping("/banco-api/agencia")
 public class AgenciaResource {
 	
 	@Autowired

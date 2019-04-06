@@ -19,28 +19,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.gleisonandrade.bancoapi.domain.Agencia;
-import br.com.gleisonandrade.bancoapi.services.AgenciaService;
+import br.com.gleisonandrade.bancoapi.domain.Conta;
+import br.com.gleisonandrade.bancoapi.services.ContaService;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
  *
  */
 @RestController
-@RequestMapping("/conta-api/conta")
+@RequestMapping("/banco-api/conta")
 public class ContaResource {
 	@Autowired
-	private AgenciaService contaService;
+	private ContaService contaService;
 	
 	@GetMapping
-	public ResponseEntity<List<Agencia>> listar() {
-		List<Agencia> contas = contaService.listarTodos();
+	public ResponseEntity<List<Conta>> listar() {
+		List<Conta> contas = contaService.listarTodos();
 		return ResponseEntity.ok(contas);
 	}
 
 	@GetMapping(path = "/{id}")
-	public ResponseEntity<Agencia> buscar(@PathVariable Long id) {
-		Agencia contaBuscado = contaService.buscar(id);
+	public ResponseEntity<Conta> buscar(@PathVariable Long id) {
+		Conta contaBuscado = contaService.buscar(id);
 
 		if (contaBuscado == null) {
 			return ResponseEntity.notFound().build();
@@ -50,14 +50,14 @@ public class ContaResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<Agencia> adicionar(@Valid @RequestBody Agencia conta) {
-		Agencia contaCadastrada = contaService.salvarOuAtualizar(conta);
+	public ResponseEntity<Conta> adicionar(@Valid @RequestBody Conta conta) {
+		Conta contaCadastrada = contaService.salvarOuAtualizar(conta);
 		return ResponseEntity.ok(contaCadastrada);
 	}
 
 	@PutMapping(path = "/{id}")
-	public ResponseEntity<Agencia> atualizar(@PathVariable Long id, @Valid @RequestBody Agencia conta) {
-		Agencia contaBuscada = contaService.buscar(id);
+	public ResponseEntity<Conta> atualizar(@PathVariable Long id, @Valid @RequestBody Conta conta) {
+		Conta contaBuscada = contaService.buscar(id);
 
 		if (contaBuscada == null) {
 			return ResponseEntity.notFound().build();
@@ -70,7 +70,7 @@ public class ContaResource {
 
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
-		Agencia contaBuscada = contaService.buscar(id);
+		Conta contaBuscada = contaService.buscar(id);
 
 		if (contaBuscada == null) {
 			return ResponseEntity.notFound().build();

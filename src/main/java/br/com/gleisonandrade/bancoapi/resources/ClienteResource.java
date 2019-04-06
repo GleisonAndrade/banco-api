@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.gleisonandrade.bancoapi.domain.Agencia;
-import br.com.gleisonandrade.bancoapi.services.AgenciaService;
+import br.com.gleisonandrade.bancoapi.domain.Cliente;
+import br.com.gleisonandrade.bancoapi.services.ClienteService;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -28,20 +28,20 @@ import br.com.gleisonandrade.bancoapi.services.AgenciaService;
  */
 
 @RestController
-@RequestMapping("/cliente-api/cliente")
+@RequestMapping("/banco-api/cliente")
 public class ClienteResource {
 	@Autowired
-	private AgenciaService clienteService;
+	private ClienteService clienteService;
 	
 	@GetMapping
-	public ResponseEntity<List<Agencia>> listar() {
-		List<Agencia> clientes = clienteService.listarTodos();
+	public ResponseEntity<List<Cliente>> listar() {
+		List<Cliente> clientes = clienteService.listarTodos();
 		return ResponseEntity.ok(clientes);
 	}
 
 	@GetMapping(path = "/{id}")
-	public ResponseEntity<Agencia> buscar(@PathVariable Long id) {
-		Agencia clienteBuscado = clienteService.buscar(id);
+	public ResponseEntity<Cliente> buscar(@PathVariable Long id) {
+		Cliente clienteBuscado = clienteService.buscar(id);
 
 		if (clienteBuscado == null) {
 			return ResponseEntity.notFound().build();
@@ -51,14 +51,14 @@ public class ClienteResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<Agencia> adicionar(@Valid @RequestBody Agencia cliente) {
-		Agencia clienteCadastrada = clienteService.salvarOuAtualizar(cliente);
+	public ResponseEntity<Cliente> adicionar(@Valid @RequestBody Cliente cliente) {
+		Cliente clienteCadastrada = clienteService.salvarOuAtualizar(cliente);
 		return ResponseEntity.ok(clienteCadastrada);
 	}
 
 	@PutMapping(path = "/{id}")
-	public ResponseEntity<Agencia> atualizar(@PathVariable Long id, @Valid @RequestBody Agencia cliente) {
-		Agencia clienteBuscada = clienteService.buscar(id);
+	public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @Valid @RequestBody Cliente cliente) {
+		Cliente clienteBuscada = clienteService.buscar(id);
 
 		if (clienteBuscada == null) {
 			return ResponseEntity.notFound().build();
@@ -71,7 +71,7 @@ public class ClienteResource {
 
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
-		Agencia clienteBuscada = clienteService.buscar(id);
+		Cliente clienteBuscada = clienteService.buscar(id);
 
 		if (clienteBuscada == null) {
 			return ResponseEntity.notFound().build();
