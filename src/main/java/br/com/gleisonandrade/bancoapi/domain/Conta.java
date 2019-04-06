@@ -4,7 +4,15 @@
 package br.com.gleisonandrade.bancoapi.domain;
 
 import java.io.Serializable;
-import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoDeConta;
 
@@ -12,6 +20,8 @@ import br.com.gleisonandrade.bancoapi.domain.enuns.TipoDeConta;
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
  *
  */
+
+@Entity
 public class Conta implements Serializable{
 	
 	/**
@@ -19,14 +29,27 @@ public class Conta implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
 	private String numero;
+	
+	@Enumerated(EnumType.STRING)
 	private TipoDeConta tipo;
+	
+	@ManyToOne(targetEntity = Cliente.class)
+	@JoinColumn(name="cliente_id")
 	private Cliente cliente;
+	
+	@ManyToOne(targetEntity = Agencia.class)
+	@JoinColumn(name="agencia_id")
 	private Agencia agencia;
+	
+	private String senha;
+	
 	private Double saldo;
-	private List<Extrato> extratos;
-
+	
 	public Conta() {
 	}
 
@@ -37,12 +60,13 @@ public class Conta implements Serializable{
 	 * @param agencia
 	 * @param saldo
 	 */
-	public Conta(String numero, TipoDeConta tipo, Cliente cliente, Agencia agencia, Double saldo) {
+	public Conta(String numero, TipoDeConta tipo, Cliente cliente, Agencia agencia, String senha, Double saldo) {
 		super();
 		this.numero = numero;
 		this.tipo = tipo;
 		this.cliente = cliente;
 		this.agencia = agencia;
+		this.senha = senha;
 		this.saldo = saldo;
 	}
 
@@ -86,6 +110,14 @@ public class Conta implements Serializable{
 		this.agencia = agencia;
 	}
 
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
 	public Double getSaldo() {
 		return saldo;
 	}
@@ -94,12 +126,41 @@ public class Conta implements Serializable{
 		this.saldo = saldo;
 	}
 
-	public List<Extrato> getExtratos() {
-		return extratos;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((agencia == null) ? 0 : agencia.hashCode());
+		result = prime * result + ((numero == null) ? 0 : numero.hashCode());
+		return result;
 	}
 
-	public void setExtratos(List<Extrato> extratos) {
-		this.extratos = extratos;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Conta other = (Conta) obj;
+		if (agencia == null) {
+			if (other.agencia != null) {
+				return false;
+			}
+		} else if (!agencia.equals(other.agencia)) {
+			return false;
+		}
+		if (numero == null) {
+			if (other.numero != null) {
+				return false;
+			}
+		} else if (!numero.equals(other.numero)) {
+			return false;
+		}
+		return true;
 	}
-
 }
