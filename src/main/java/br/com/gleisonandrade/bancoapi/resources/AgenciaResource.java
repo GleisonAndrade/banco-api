@@ -1,11 +1,11 @@
 package br.com.gleisonandrade.bancoapi.resources;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gleisonandrade.bancoapi.domain.Agencia;
+import br.com.gleisonandrade.bancoapi.services.AgenciaService;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -25,15 +26,19 @@ import br.com.gleisonandrade.bancoapi.domain.Agencia;
 @RestController
 @RequestMapping("/agencia-api/agencia")
 public class AgenciaResource {
+	
+	@Autowired
+	private AgenciaService agenciaService;
+	
 	@GetMapping
 	public ResponseEntity<List<Agencia>> listar() {
-		List<Agencia> agencias = new ArrayList<>();
+		List<Agencia> agencias = agenciaService.listarTodos();
 		return ResponseEntity.ok(agencias);
 	}
 
 	@GetMapping(path = "/{id}")
 	public ResponseEntity<Agencia> buscar(@PathVariable Long id) {
-		Agencia agenciaBuscado = null;
+		Agencia agenciaBuscado = agenciaService.buscar(id);
 
 		if (agenciaBuscado == null) {
 			return ResponseEntity.notFound().build();
@@ -44,25 +49,34 @@ public class AgenciaResource {
 
 	@PostMapping
 	public ResponseEntity<Agencia> adicionar(@Valid @RequestBody Agencia agencia) {
-		return ResponseEntity.ok(new Agencia());
+		Agencia agenciaCadastrada = agenciaService.salvarOuAtualizar(agencia);
+		return ResponseEntity.ok(agenciaCadastrada);
 	}
 
 	@PutMapping(path = "/{id}")
 	public ResponseEntity<Agencia> atualizar(@PathVariable Long id, @Valid @RequestBody Agencia agencia) {
-		Agencia agenciaBuscado = null;
+		Agencia agenciaBuscada = agenciaService.buscar(id);
 
-		if (agenciaBuscado == null) {
+		if (agenciaBuscada == null) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		BeanUtils.copyProperties(agencia, agenciaBuscado, "id");
+		BeanUtils.copyProperties(agencia, agenciaBuscada, "id");
 		
-		return ResponseEntity.ok(agenciaBuscado);
+		return ResponseEntity.ok(agenciaBuscada);
 	}
 
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
-		return ResponseEntity.noContent().build();
+		Agencia agenciaBuscada = agenciaService.buscar(id);
+
+		if (agenciaBuscada == null) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		agenciaService.remover(agenciaBuscada);
+		
+		return ResponseEntity.ok().build();
 	}
 
 }

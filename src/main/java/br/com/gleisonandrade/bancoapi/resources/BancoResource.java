@@ -3,12 +3,12 @@
  */
 package br.com.gleisonandrade.bancoapi.resources;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.gleisonandrade.bancoapi.domain.Banco;
+import br.com.gleisonandrade.bancoapi.domain.Agencia;
+import br.com.gleisonandrade.bancoapi.services.AgenciaService;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -30,15 +31,18 @@ import br.com.gleisonandrade.bancoapi.domain.Banco;
 @RequestMapping("/banco-api/banco")
 public class BancoResource {
 
+	@Autowired
+	private AgenciaService bancoService;
+	
 	@GetMapping
-	public ResponseEntity<List<Banco>> listar() {
-		List<Banco> bancos = new ArrayList<>();
+	public ResponseEntity<List<Agencia>> listar() {
+		List<Agencia> bancos = bancoService.listarTodos();
 		return ResponseEntity.ok(bancos);
 	}
 
 	@GetMapping(path = "/{id}")
-	public ResponseEntity<Banco> buscar(@PathVariable Long id) {
-		Banco bancoBuscado = null;
+	public ResponseEntity<Agencia> buscar(@PathVariable Long id) {
+		Agencia bancoBuscado = bancoService.buscar(id);
 
 		if (bancoBuscado == null) {
 			return ResponseEntity.notFound().build();
@@ -48,26 +52,35 @@ public class BancoResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<Banco> adicionar(@Valid @RequestBody Banco banco) {
-		return ResponseEntity.ok(new Banco());
+	public ResponseEntity<Agencia> adicionar(@Valid @RequestBody Agencia banco) {
+		Agencia bancoCadastrada = bancoService.salvarOuAtualizar(banco);
+		return ResponseEntity.ok(bancoCadastrada);
 	}
 
 	@PutMapping(path = "/{id}")
-	public ResponseEntity<Banco> atualizar(@PathVariable Long id, @Valid @RequestBody Banco banco) {
-		Banco bancoBuscado = null;
+	public ResponseEntity<Agencia> atualizar(@PathVariable Long id, @Valid @RequestBody Agencia banco) {
+		Agencia bancoBuscada = bancoService.buscar(id);
 
-		if (bancoBuscado == null) {
+		if (bancoBuscada == null) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		BeanUtils.copyProperties(banco, bancoBuscado, "id");
+		BeanUtils.copyProperties(banco, bancoBuscada, "id");
 		
-		return ResponseEntity.ok(bancoBuscado);
+		return ResponseEntity.ok(bancoBuscada);
 	}
 
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
-		return ResponseEntity.noContent().build();
+		Agencia bancoBuscada = bancoService.buscar(id);
+
+		if (bancoBuscada == null) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		bancoService.remover(bancoBuscada);
+		
+		return ResponseEntity.ok().build();
 	}
 
 }
