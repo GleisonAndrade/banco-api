@@ -18,32 +18,51 @@ public abstract class GenericServiceImpl<E, K> implements GenericService<E, K> {
 	public GenericServiceImpl() {
 	}
 	
+	/**
+	 * Define que dados devem ser atualizados da entidade.
+	 * 
+	 * @param entity entidade que será atualizada.
+	 * @param newEntity entidade com os novos dados a serem copiados.
+	 * @return uma nova instância da entidade com os dados atualizados.
+	 */
+	protected abstract E atualizaDados(E entity, E newEntity); 
+	
+	/**
+	 * Salva a entidade passada e retorna a entidade atualizada e com identificador definido.
+	 */
 	@Override
-	public E adicionar(E entity) {
+	public E salvar(E entity) {
 		return jpaRepository.save(entity);
 	}
 	
-	@Override
-	public E salvarOuAtualizar(E entity) {
-		return jpaRepository.save(entity);
-	}
-	
+	/**
+	 * Atualiza os dados de uma entidade de forma simples. Apenas pega os dados da entidade e atualiza no banco.
+	 */
 	@Override
 	public E atualizar(E entity) {
 		return jpaRepository.save(entity);
 	}
 	
+	/**
+	 * Busca uma entidade pela sua chave. Caso ela não exista é retornado um objeto null.
+	 */
 	@Override
 	public E buscar(K key) {
 		Optional<E> obj = jpaRepository.findById(key);
 		return obj.orElse(null);
 	}
 	
+	/**
+	 * Remove um entidade do banco de acordo com o id do objeto.
+	 */
 	@Override
-	public void remover(E entity) {
-		jpaRepository.delete(entity);
+	public void remover(K key) {
+		jpaRepository.deleteById(key);
 	}
 	
+	/**
+	 * Lista todos os registros da entidade no banco.
+	 */
 	@Override
 	public List<E> listarTodos() {
 		return jpaRepository.findAll();
