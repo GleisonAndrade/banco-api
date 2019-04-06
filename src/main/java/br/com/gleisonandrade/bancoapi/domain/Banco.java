@@ -32,6 +32,16 @@ public class Banco implements Serializable{
 	}
 	
 	/**
+	 * @param id
+	 * @param nome
+	 */
+	public Banco(Long id, String nome) {
+		super();
+		this.id = id;
+		this.nome = nome;
+	}
+
+	/**
 	 * @param nome
 	 */
 	public Banco(String nome) {
