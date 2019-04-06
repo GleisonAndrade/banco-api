@@ -52,7 +52,7 @@ public class ClienteResource {
 
 	@PostMapping
 	public ResponseEntity<Cliente> adicionar(@Valid @RequestBody Cliente cliente) {
-		Cliente clienteCadastrada = clienteService.salvarOuAtualizar(cliente);
+		Cliente clienteCadastrada = clienteService.salvar(cliente);
 		return ResponseEntity.ok(clienteCadastrada);
 	}
 
@@ -77,7 +77,7 @@ public class ClienteResource {
 			return ResponseEntity.notFound().build();
 		}
 		
-		clienteService.remover(clienteBuscada);
+		clienteService.remover(id);
 		
 		return ResponseEntity.ok().build();
 	}

@@ -24,4 +24,10 @@ public class ClienteService extends GenericServiceImpl<Cliente, Long>{
 		this.clienteRepository = clienteRepository;
 	}
 
+	@Override
+	protected Cliente atualizaDados(Cliente entity, Cliente newEntity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -22,4 +22,10 @@ public class ContaService extends GenericServiceImpl<Conta, Long>{
 		super(contaRepository);
 		this.contaRepository = contaRepository;
 	}
+
+	@Override
+	protected Conta atualizaDados(Conta entity, Conta newEntity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

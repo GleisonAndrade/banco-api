@@ -49,7 +49,7 @@ public class AgenciaResource {
 
 	@PostMapping
 	public ResponseEntity<Agencia> adicionar(@Valid @RequestBody Agencia agencia) {
-		Agencia agenciaCadastrada = agenciaService.salvarOuAtualizar(agencia);
+		Agencia agenciaCadastrada = agenciaService.salvar(agencia);
 		return ResponseEntity.ok(agenciaCadastrada);
 	}
 
@@ -74,7 +74,7 @@ public class AgenciaResource {
 			return ResponseEntity.notFound().build();
 		}
 		
-		agenciaService.remover(agenciaBuscada);
+		agenciaService.remover(id);
 		
 		return ResponseEntity.ok().build();
 	}

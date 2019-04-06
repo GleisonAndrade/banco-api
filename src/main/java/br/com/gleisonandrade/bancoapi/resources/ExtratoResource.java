@@ -52,7 +52,7 @@ public class ExtratoResource {
 
 	@PostMapping
 	public ResponseEntity<Extrato> adicionar(@Valid @RequestBody Extrato extrato) {
-		Extrato extratoCadastrada = extratoService.salvarOuAtualizar(extrato);
+		Extrato extratoCadastrada = extratoService.salvar(extrato);
 		return ResponseEntity.ok(extratoCadastrada);
 	}
 
@@ -77,7 +77,7 @@ public class ExtratoResource {
 			return ResponseEntity.notFound().build();
 		}
 
-		extratoService.remover(extratoBuscada);
+		extratoService.remover(id);
 
 		return ResponseEntity.ok().build();
 	}

@@ -51,7 +51,7 @@ public class ContaResource {
 
 	@PostMapping
 	public ResponseEntity<Conta> adicionar(@Valid @RequestBody Conta conta) {
-		Conta contaCadastrada = contaService.salvarOuAtualizar(conta);
+		Conta contaCadastrada = contaService.salvar(conta);
 		return ResponseEntity.ok(contaCadastrada);
 	}
 
@@ -76,7 +76,7 @@ public class ContaResource {
 			return ResponseEntity.notFound().build();
 		}
 		
-		contaService.remover(contaBuscada);
+		contaService.remover(id);
 		
 		return ResponseEntity.ok().build();
 	}

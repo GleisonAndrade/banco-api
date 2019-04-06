@@ -22,4 +22,10 @@ public class AgenciaService extends GenericServiceImpl<Agencia, Long>{
 		super(agenciaRepository);
 		this.agenciaRepository = agenciaRepository;
 	}
+
+	@Override
+	protected Agencia atualizaDados(Agencia entity, Agencia newEntity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

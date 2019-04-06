@@ -22,4 +22,10 @@ public class ExtratoService extends GenericServiceImpl<Extrato, Long>{
 		super(extratoRepository);
 		this.extratoRepository = extratoRepository;
 	}
+
+	@Override
+	protected Extrato atualizaDados(Extrato entity, Extrato newEntity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
