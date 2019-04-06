@@ -5,6 +5,10 @@ package br.com.gleisonandrade.bancoapi.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
 import br.com.gleisonandrade.bancoapi.domain.Banco;
 
 /**
@@ -16,6 +20,9 @@ public class BancoDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
+	
+	@NotEmpty(message="Preenchimento obrigatório")
+	@Length(min=3, max=250, message="O tamanho deve ser entre 3 e 250 caracteres")
 	private String nome;
 
 	public BancoDTO() {
