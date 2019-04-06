@@ -3,12 +3,14 @@
  */
 package br.com.gleisonandrade.bancoapi.resources;
 
+import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +19,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.gleisonandrade.bancoapi.domain.Banco;
+import br.com.gleisonandrade.bancoapi.dto.BancoDTO;
 import br.com.gleisonandrade.bancoapi.services.BancoService;
 
 /**
@@ -33,11 +38,13 @@ public class BancoResource {
 
 	@Autowired
 	private BancoService bancoService;
-	
+
 	@GetMapping
-	public ResponseEntity<List<Banco>> listar() {
+	public ResponseEntity<List<BancoDTO>> listar() {
 		List<Banco> bancos = bancoService.listarTodos();
-		return ResponseEntity.ok(bancos);
+		List<BancoDTO> bancosDTO = bancos.stream().map(banco -> new BancoDTO(banco)).collect(Collectors.toList());
+
+		return ResponseEntity.ok(bancosDTO);
 	}
 
 	@GetMapping(path = "/{id}")
@@ -52,35 +59,41 @@ public class BancoResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<Banco> adicionar(@Valid @RequestBody Banco banco) {
-		Banco bancoCadastrada = bancoService.salvarOuAtualizar(banco);
-		return ResponseEntity.ok(bancoCadastrada);
+	public ResponseEntity<Void> adicionar(@Valid @RequestBody BancoDTO bancoDto) {
+		Banco bancoCadastrado = bancoService.converteDTOEmEntidade(bancoDto);
+		bancoCadastrado = bancoService.salvar(bancoCadastrado);
+
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(bancoCadastrado.getId())
+				.toUri();
+		return ResponseEntity.created(uri).build();
 	}
 
 	@PutMapping(path = "/{id}")
-	public ResponseEntity<Banco> atualizar(@PathVariable Long id, @Valid @RequestBody Banco banco) {
-		Banco bancoBuscada = bancoService.buscar(id);
+	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody BancoDTO bancoDto) {
+		Banco bancoBuscada = bancoService.converteDTOEmEntidade(bancoDto);
+		bancoBuscada.setId(id);
+		bancoBuscada = bancoService.atualizar(bancoBuscada);
 
-		if (bancoBuscada == null) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		BeanUtils.copyProperties(banco, bancoBuscada, "id");
-		
-		return ResponseEntity.ok(bancoBuscada);
+		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
-		Banco bancoBuscada = bancoService.buscar(id);
-
-		if (bancoBuscada == null) {
-			return ResponseEntity.notFound().build();
-		}
+		bancoService.remover(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping(path = "/page")
+	public ResponseEntity<Page<BancoDTO>> buscaPaginada(
+			@RequestParam(value="page", defaultValue="0") Integer page, 
+			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
+			@RequestParam(value="orderBy", defaultValue="nome") String orderBy, 
+			@RequestParam(value="direction", defaultValue="ASC") String direction) {
 		
-		bancoService.remover(bancoBuscada);
+		Page<Banco> list = bancoService.buscaPaginada(page, linesPerPage, orderBy, direction);
+		Page<BancoDTO> listDto = list.map(obj -> new BancoDTO(obj));  
 		
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok().body(listDto);
 	}
 
 }
