@@ -32,23 +32,21 @@ public class Conta implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
 	private String numero;
+	private String senha;
+	private Double saldo = 0.0;
 	
 	@Enumerated(EnumType.STRING)
 	private TipoDeConta tipo;
 	
-	@ManyToOne(targetEntity = Cliente.class)
+	@ManyToOne
 	@JoinColumn(name="cliente_id")
 	private Cliente cliente;
 	
-	@ManyToOne(targetEntity = Agencia.class)
+	@ManyToOne
 	@JoinColumn(name="agencia_id")
 	private Agencia agencia;
 	
-	private String senha;
-	
-	private Double saldo;
 	
 	public Conta() {
 	}

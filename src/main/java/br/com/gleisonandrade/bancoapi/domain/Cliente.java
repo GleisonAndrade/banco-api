@@ -4,14 +4,11 @@
 package br.com.gleisonandrade.bancoapi.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -31,9 +28,6 @@ public class Cliente implements Serializable{
 	
 	private String nome;
 	private String cpf;
-	
-	@OneToMany(mappedBy="cliente")
-	private List<Conta> contas = new ArrayList<>();
 
 	public Cliente() {
 	}
@@ -71,14 +65,6 @@ public class Cliente implements Serializable{
 
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
-	}
-
-	public List<Conta> getContas() {
-		return contas;
-	}
-
-	public void setContas(List<Conta> contas) {
-		this.contas = contas;
 	}
 
 	@Override

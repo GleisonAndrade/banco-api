@@ -41,11 +41,11 @@ public class Extrato implements Serializable{
 	private TipoOperacao tipoOperacao;
 	
 	private Double valor;
+	private String informacoes;
 	
 	@ManyToOne
 	private Conta conta;
 	
-	private String informacoes;
 
 	public Extrato() {
 	}
