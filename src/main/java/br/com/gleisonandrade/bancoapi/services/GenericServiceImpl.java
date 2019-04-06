@@ -3,6 +3,9 @@ package br.com.gleisonandrade.bancoapi.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -68,5 +71,8 @@ public abstract class GenericServiceImpl<E, K> implements GenericService<E, K> {
 		return jpaRepository.findAll();
 	}
 	
-
+	public Page<E> buscaPaginada(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		return jpaRepository.findAll(pageRequest);
+	}
 }

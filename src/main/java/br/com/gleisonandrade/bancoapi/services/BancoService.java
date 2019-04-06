@@ -69,11 +69,6 @@ public class BancoService extends GenericServiceImpl<Banco, Long>{
 		}
 	}
 	
-	public Page<Banco> buscaPaginada(Integer page, Integer linesPerPage, String orderBy, String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return bancoRepository.findAll(pageRequest);
-	}
-	
 	public Banco converteDTOEmEntidade(BancoDTO dto) {
 		return new Banco(dto.getId(), dto.getNome());
 	}
