@@ -3,6 +3,7 @@
  */
 package br.com.gleisonandrade.bancoapi.repositories.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -22,23 +23,23 @@ import br.com.gleisonandrade.bancoapi.repositories.custom.AgenciaRepositoryCusto
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
  *
  */
-public class AgenciaRepositoryCustomImpl implements AgenciaRepositoryCustom{
-	
+public class AgenciaRepositoryCustomImpl implements AgenciaRepositoryCustom {
+
 	@Autowired
-    private EntityManager entityManager;
+	private EntityManager entityManager;
 
 	@Override
 	public Optional<Agencia> buscarPorNumero(Long bancoId, String numeroDaConta) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Agencia> cq = cb.createQuery(Agencia.class);
-		
+
 		Root<Agencia> root = cq.from(Agencia.class);
 		CriteriaQuery<Agencia> query = cq.select(root);
 
 		Predicate predicadoBancoId = cb.equal(root.get("banco").get("id"), bancoId);
 		Predicate predicado = cb.equal(root.get("numero"), numeroDaConta);
-		
-		Predicate[] predicates = {predicadoBancoId, predicado};
+
+		Predicate[] predicates = { predicadoBancoId, predicado };
 
 		query.where(predicates);
 
@@ -49,6 +50,22 @@ public class AgenciaRepositoryCustomImpl implements AgenciaRepositoryCustom{
 		} catch (NoResultException e) {
 			return Optional.of(null);
 		}
+	}
+
+	@Override
+	public List<Agencia> buscarPorNumero(Long id) {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Agencia> cq = cb.createQuery(Agencia.class);
+
+		Root<Agencia> root = cq.from(Agencia.class);
+		CriteriaQuery<Agencia> query = cq.select(root);
+
+		Predicate predicadoBancoId = cb.equal(root.get("banco").get("id"), id);
+		query.where(predicadoBancoId);
+
+		TypedQuery<Agencia> tq = entityManager.createQuery(query);
+
+		return tq.getResultList();
 	}
 
 }

@@ -102,8 +102,16 @@ public class BancoResource {
 		return ResponseEntity.ok().body(listDto);
 	}
 	
+	@GetMapping(path = "/{id}/agencia")
+	public ResponseEntity<List<AgenciaDTO>> buscarAgencias(@PathVariable Long id) {
+		List<Agencia> agencias = agenciaService.buscarPorBanco(id);
+		List<AgenciaDTO> agenciasDTO = agencias.stream().map(agencia -> new AgenciaDTO(agencia)).collect(Collectors.toList());
+
+		return ResponseEntity.ok(agenciasDTO);
+	}
+	
 	@GetMapping(path = "/{id}/agencia/{numero}")
-	public ResponseEntity<AgenciaDTO> buscar(@PathVariable Long id, @PathVariable String numero) {
+	public ResponseEntity<AgenciaDTO> buscarAgencia(@PathVariable Long id, @PathVariable String numero) {
 		Agencia agenciaBuscada = agenciaService.buscarPorNumero(id, numero);
 
 		if (agenciaBuscada == null) {

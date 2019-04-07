@@ -3,6 +3,7 @@
  */
 package br.com.gleisonandrade.bancoapi.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +32,6 @@ public class AgenciaService extends GenericServiceImpl<Agencia, Long>{
 		this.agenciaRepository = agenciaRepository;
 	}
 
-	public Agencia buscarPorNumero(Long bancoId, String numero) {
-		Optional<Agencia> agencia = agenciaRepository.buscarPorNumero(bancoId, numero);
-		
-		return agencia.orElseThrow(() -> new ObjetoNaoEncontradoException(
-				"Conta não encontrada! Numero: " + numero));
-	}
-	
 	@Override
 	public Agencia buscar(Long key) {
 		Optional<Agencia> agencia = agenciaRepository.findById(key);
@@ -84,5 +78,16 @@ public class AgenciaService extends GenericServiceImpl<Agencia, Long>{
 		agencia.setBanco(banco);
 		
 		return agencia;
+	}
+	
+	public Agencia buscarPorNumero(Long bancoId, String numero) {
+		Optional<Agencia> agencia = agenciaRepository.buscarPorNumero(bancoId, numero);
+		
+		return agencia.orElseThrow(() -> new ObjetoNaoEncontradoException(
+				"Conta não encontrada! Numero: " + numero));
+	}
+
+	public List<Agencia> buscarPorBanco(Long id) {
+		return agenciaRepository.buscarPorNumero(id);
 	}
 }
