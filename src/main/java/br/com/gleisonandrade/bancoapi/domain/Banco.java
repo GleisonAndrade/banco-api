@@ -49,6 +49,11 @@ public class Banco implements Serializable{
 		this.nome = nome;
 	}
 
+	public Banco(Long id) {
+		super();
+		this.id = id;
+	}
+
 	public Long getId() {
 		return id;
 	}

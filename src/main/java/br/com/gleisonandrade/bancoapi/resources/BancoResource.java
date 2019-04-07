@@ -23,8 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import br.com.gleisonandrade.bancoapi.domain.Agencia;
 import br.com.gleisonandrade.bancoapi.domain.Banco;
+import br.com.gleisonandrade.bancoapi.dto.AgenciaDTO;
 import br.com.gleisonandrade.bancoapi.dto.BancoDTO;
+import br.com.gleisonandrade.bancoapi.services.AgenciaService;
 import br.com.gleisonandrade.bancoapi.services.BancoService;
 
 /**
@@ -38,6 +41,9 @@ public class BancoResource {
 
 	@Autowired
 	private BancoService bancoService;
+	
+	@Autowired
+	private AgenciaService agenciaService;
 
 	@GetMapping
 	public ResponseEntity<List<BancoDTO>> listar() {
@@ -94,6 +100,17 @@ public class BancoResource {
 		Page<BancoDTO> listDto = list.map(obj -> new BancoDTO(obj));  
 		
 		return ResponseEntity.ok().body(listDto);
+	}
+	
+	@GetMapping(path = "/{id}/agencia/{numero}")
+	public ResponseEntity<AgenciaDTO> buscar(@PathVariable Long id, @PathVariable String numero) {
+		Agencia agenciaBuscada = agenciaService.buscarPorNumero(id, numero);
+
+		if (agenciaBuscada == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		return ResponseEntity.ok(new AgenciaDTO(agenciaBuscada));
 	}
 
 }
