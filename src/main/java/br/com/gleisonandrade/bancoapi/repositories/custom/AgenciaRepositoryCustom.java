@@ -3,6 +3,8 @@
  */
 package br.com.gleisonandrade.bancoapi.repositories.custom;
 
+import java.util.Optional;
+
 import br.com.gleisonandrade.bancoapi.domain.Agencia;
 
 /**
@@ -10,5 +12,5 @@ import br.com.gleisonandrade.bancoapi.domain.Agencia;
  *
  */
 public interface AgenciaRepositoryCustom {
-	Agencia buscarPorNumero(String numero);
+	public Optional<Agencia> buscarPorNumero(Long bancoId, String numeroDaConta);
 }
