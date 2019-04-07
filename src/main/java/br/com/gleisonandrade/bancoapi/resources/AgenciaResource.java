@@ -1,11 +1,13 @@
 package br.com.gleisonandrade.bancoapi.resources;
 
+import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.gleisonandrade.bancoapi.domain.Agencia;
+import br.com.gleisonandrade.bancoapi.dto.AgenciaDTO;
+import br.com.gleisonandrade.bancoapi.dto.NovaAgenciaDTO;
 import br.com.gleisonandrade.bancoapi.services.AgenciaService;
 
 /**
@@ -31,11 +37,13 @@ public class AgenciaResource {
 	private AgenciaService agenciaService;
 	
 	@GetMapping
-	public ResponseEntity<List<Agencia>> listar() {
+	public ResponseEntity<List<AgenciaDTO>> listar() {
 		List<Agencia> agencias = agenciaService.listarTodos();
-		return ResponseEntity.ok(agencias);
-	}
+		List<AgenciaDTO> agenciasDTO = agencias.stream().map(agencia -> new AgenciaDTO(agencia)).collect(Collectors.toList());
 
+		return ResponseEntity.ok(agenciasDTO);
+	}
+	
 	@GetMapping(path = "/{id}")
 	public ResponseEntity<Agencia> buscar(@PathVariable Long id) {
 		Agencia agenciaBuscado = agenciaService.buscar(id);
@@ -47,36 +55,42 @@ public class AgenciaResource {
 		return ResponseEntity.ok(agenciaBuscado);
 	}
 
-	@PostMapping
-	public ResponseEntity<Agencia> adicionar(@Valid @RequestBody Agencia agencia) {
-		Agencia agenciaCadastrada = agenciaService.salvar(agencia);
-		return ResponseEntity.ok(agenciaCadastrada);
+	@PostMapping()
+	public ResponseEntity<Void> adicionar(@Valid @RequestBody NovaAgenciaDTO agenciaDto) {
+		Agencia agenciaCadastrado = agenciaService.converteDTOEmEntidade(agenciaDto);
+		agenciaCadastrado = agenciaService.salvar(agenciaCadastrado);
+
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(agenciaCadastrado.getId())
+				.toUri();
+		return ResponseEntity.created(uri).build();
 	}
 
 	@PutMapping(path = "/{id}")
-	public ResponseEntity<Agencia> atualizar(@PathVariable Long id, @Valid @RequestBody Agencia agencia) {
-		Agencia agenciaBuscada = agenciaService.buscar(id);
+	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody AgenciaDTO agenciaDto) {
+		Agencia agenciaBuscada = agenciaService.converteDTOEmEntidade(agenciaDto);
+		agenciaBuscada.setId(id);
+		agenciaBuscada = agenciaService.atualizar(agenciaBuscada);
 
-		if (agenciaBuscada == null) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		BeanUtils.copyProperties(agencia, agenciaBuscada, "id");
-		
-		return ResponseEntity.ok(agenciaBuscada);
+		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
-		Agencia agenciaBuscada = agenciaService.buscar(id);
-
-		if (agenciaBuscada == null) {
-			return ResponseEntity.notFound().build();
-		}
-		
 		agenciaService.remover(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping(path = "/page")
+	public ResponseEntity<Page<AgenciaDTO>> buscaPaginada(
+			@RequestParam(value="page", defaultValue="0") Integer page, 
+			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
+			@RequestParam(value="orderBy", defaultValue="nome") String orderBy, 
+			@RequestParam(value="direction", defaultValue="ASC") String direction) {
 		
-		return ResponseEntity.ok().build();
+		Page<Agencia> list = agenciaService.buscaPaginada(page, linesPerPage, orderBy, direction);
+		Page<AgenciaDTO> listDto = list.map(obj -> new AgenciaDTO(obj));  
+		
+		return ResponseEntity.ok().body(listDto);
 	}
 
 }

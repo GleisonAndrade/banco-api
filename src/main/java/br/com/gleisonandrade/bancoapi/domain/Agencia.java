@@ -52,6 +52,12 @@ public class Agencia implements Serializable{
 		this.banco = banco;
 	}
 
+	public Agencia(String numero, String nome) {
+		super();
+		this.numero = numero;
+		this.nome = nome;
+	}
+
 	public Long getId() {
 		return id;
 	}
