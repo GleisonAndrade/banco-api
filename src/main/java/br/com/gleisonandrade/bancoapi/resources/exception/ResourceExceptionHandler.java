@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import br.com.gleisonandrade.bancoapi.services.exceptions.IntegridadeDeDadosException;
+import br.com.gleisonandrade.bancoapi.services.exceptions.NegocioException;
 import br.com.gleisonandrade.bancoapi.services.exceptions.ObjetoNaoEncontradoException;
 
 @ControllerAdvice
@@ -42,4 +43,13 @@ public class ResourceExceptionHandler {
 
 		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
 	}
+	
+	@ExceptionHandler(NegocioException.class)
+	public ResponseEntity<StandardError> dataIntegrity(NegocioException e, HttpServletRequest request) {
+
+		StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+				"Erro de negócio", e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
+	
 }
