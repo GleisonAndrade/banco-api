@@ -58,6 +58,10 @@ public class Agencia implements Serializable{
 		this.nome = nome;
 	}
 
+	public Agencia(Long id) {
+		this.id = id;
+	}
+
 	public Long getId() {
 		return id;
 	}

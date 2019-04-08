@@ -48,7 +48,7 @@ public class AgenciaRepositoryCustomImpl implements AgenciaRepositoryCustom {
 		try {
 			return Optional.of(tq.getSingleResult());
 		} catch (NoResultException e) {
-			return Optional.of(null);
+			return null;
 		}
 	}
 

@@ -64,7 +64,7 @@ public class AgenciaService extends GenericServiceImpl<Agencia, Long>{
 			agenciaRepository.deleteById(key);
 		}
 		catch (DataIntegrityViolationException  e) {
-			throw new IntegridadeDeDadosException("Não é possível excluir a agencia que possuí contas!");
+			throw new IntegridadeDeDadosException("Não é possível excluir a agência que possuí contas!");
 		}
 	}
 
@@ -84,7 +84,7 @@ public class AgenciaService extends GenericServiceImpl<Agencia, Long>{
 		Optional<Agencia> agencia = agenciaRepository.buscarPorNumero(bancoId, numero);
 		
 		return agencia.orElseThrow(() -> new ObjetoNaoEncontradoException(
-				"Conta não encontrada! Numero: " + numero));
+				"Agência não encontrada! Numero: " + numero));
 	}
 
 	public List<Agencia> buscarPorBanco(Long id) {
