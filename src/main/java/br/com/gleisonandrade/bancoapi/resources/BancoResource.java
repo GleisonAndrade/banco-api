@@ -36,7 +36,7 @@ import br.com.gleisonandrade.bancoapi.services.BancoService;
  */
 
 @RestController
-@RequestMapping("/banco-api/banco")
+@RequestMapping("/banco")
 public class BancoResource {
 
 	@Autowired

@@ -28,7 +28,7 @@ import br.com.gleisonandrade.bancoapi.services.ClienteService;
  */
 
 @RestController
-@RequestMapping("/banco-api/cliente")
+@RequestMapping("/cliente")
 public class ClienteResource {
 	@Autowired
 	private ClienteService clienteService;

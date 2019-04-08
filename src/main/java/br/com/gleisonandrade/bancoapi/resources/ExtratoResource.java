@@ -28,7 +28,7 @@ import br.com.gleisonandrade.bancoapi.services.ExtratoService;
  */
 
 @RestController
-@RequestMapping("/banco-api/extrato")
+@RequestMapping("/extrato")
 public class ExtratoResource {
 	@Autowired
 	private ExtratoService extratoService;
