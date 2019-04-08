@@ -23,7 +23,7 @@ public class AgenciaDTO implements Serializable {
 	private Long id;
 	
 	@NotEmpty(message="Preenchimento obrigatório")
-	@Pattern(regexp="\\d{4}-\\d{1}", message="O número da agência deve possuir o seguinte formato 0000-0 e ser formado apenas por números! {0}")
+	@Pattern(regexp="\\d{4}-\\d{1}", message="O número da agência deve possuir o seguinte formato 0000-0 e ser formado apenas por números!")
 	private String numero;
 	
 	@NotEmpty(message="Preenchimento obrigatório")

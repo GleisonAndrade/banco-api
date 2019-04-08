@@ -21,10 +21,8 @@ public class NovaAgenciaDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
-	
 	@NotEmpty(message="Preenchimento obrigatório")
-	@Pattern(regexp="\\d{4}-\\d{1}", message="O número da agência deve possuir o seguinte formato 0000-0 e ser formado apenas por números! {0}")
+	@Pattern(regexp="\\d{4}-\\d{1}", message="O número da agência deve possuir o seguinte formato 0000-0 e ser formado apenas por números!")
 	private String numero;
 	
 	@NotEmpty(message="Preenchimento obrigatório")
@@ -35,7 +33,6 @@ public class NovaAgenciaDTO implements Serializable {
 	private Long bancoId;	
 
 	public NovaAgenciaDTO(Agencia agencia) {
-		this.id = agencia.getId();
 		this.numero = agencia.getNumero();
 		this.nome = agencia.getNome();
 		this.bancoId = agencia.getBanco().getId();
@@ -46,14 +43,6 @@ public class NovaAgenciaDTO implements Serializable {
 	 */
 	public NovaAgenciaDTO() {
 		super();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getNumero() {
