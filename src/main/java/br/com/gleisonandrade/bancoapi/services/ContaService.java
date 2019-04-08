@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import br.com.gleisonandrade.bancoapi.domain.Agencia;
+import br.com.gleisonandrade.bancoapi.domain.Banco;
 import br.com.gleisonandrade.bancoapi.domain.Cliente;
 import br.com.gleisonandrade.bancoapi.domain.Conta;
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoDeConta;
@@ -32,6 +33,8 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 	private AgenciaService agenciaService;
 	@Autowired
 	private ClienteService clienteService;
+	@Autowired
+	private BancoService bancoService;
 
 	public ContaService(ContaRepository contaRepository) {
 		super(contaRepository);
@@ -107,6 +110,10 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 	}
 
 	public Conta cadastrar(Conta conta) {
+		
+		//Verifiar se banco existe
+		bancoService.buscar(conta.getAgencia().getBanco().getId());
+		
 		// Verificar se existe a agência
 		Agencia agencia = agenciaService.buscar(conta.getAgencia().getId());
 

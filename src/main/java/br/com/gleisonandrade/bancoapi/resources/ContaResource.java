@@ -57,13 +57,6 @@ public class ContaResource {
 		return ResponseEntity.ok(contaBuscado);
 	}
 
-	/**
-	 * Cadastra uma nova conta em uma agência.
-	 * 
-	 * @param contaDto é do tipo {@link NovaContaDTO} que recebe dados do banco, agência, conta e cliente.
-	 * 
-	 * @return
-	 */
 	@PostMapping
 	public ResponseEntity<Void> adicionar(@Valid @RequestBody NovaContaDTO contaDto) {
 		Conta contaCadastrado = contaService.converteDTOEmEntidade(contaDto);
