@@ -3,12 +3,14 @@
  */
 package br.com.gleisonandrade.bancoapi.resources;
 
+import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +19,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.gleisonandrade.bancoapi.domain.Conta;
+import br.com.gleisonandrade.bancoapi.dto.ContaDTO;
+import br.com.gleisonandrade.bancoapi.dto.NovaContaDTO;
 import br.com.gleisonandrade.bancoapi.services.ContaService;
 
 /**
@@ -33,11 +39,13 @@ public class ContaResource {
 	private ContaService contaService;
 	
 	@GetMapping
-	public ResponseEntity<List<Conta>> listar() {
+	public ResponseEntity<List<ContaDTO>> listar() {
 		List<Conta> contas = contaService.listarTodos();
-		return ResponseEntity.ok(contas);
-	}
+		List<ContaDTO> contasDTO = contas.stream().map(conta -> new ContaDTO(conta)).collect(Collectors.toList());
 
+		return ResponseEntity.ok(contasDTO);
+	}
+	
 	@GetMapping(path = "/{id}")
 	public ResponseEntity<Conta> buscar(@PathVariable Long id) {
 		Conta contaBuscado = contaService.buscar(id);
@@ -49,35 +57,49 @@ public class ContaResource {
 		return ResponseEntity.ok(contaBuscado);
 	}
 
+	/**
+	 * Cadastra uma nova conta em uma agência.
+	 * 
+	 * @param contaDto é do tipo {@link NovaContaDTO} que recebe dados do banco, agência, conta e cliente.
+	 * 
+	 * @return
+	 */
 	@PostMapping
-	public ResponseEntity<Conta> adicionar(@Valid @RequestBody Conta conta) {
-		Conta contaCadastrada = contaService.salvar(conta);
-		return ResponseEntity.ok(contaCadastrada);
+	public ResponseEntity<Void> adicionar(@Valid @RequestBody NovaContaDTO contaDto) {
+		Conta contaCadastrado = contaService.converteDTOEmEntidade(contaDto);
+		contaCadastrado = contaService.cadastrar(contaCadastrado);
+
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(contaCadastrado.getId())
+				.toUri();
+		return ResponseEntity.created(uri).build();
 	}
 
 	@PutMapping(path = "/{id}")
-	public ResponseEntity<Conta> atualizar(@PathVariable Long id, @Valid @RequestBody Conta conta) {
-		Conta contaBuscada = contaService.buscar(id);
+	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody ContaDTO contaDto) {
+		Conta contaBuscada = contaService.converteDTOEmEntidade(contaDto);
+		contaBuscada.setId(id);
+		contaBuscada = contaService.atualizar(contaBuscada);
 
-		if (contaBuscada == null) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		BeanUtils.copyProperties(conta, contaBuscada, "id");
-		
-		return ResponseEntity.ok(contaBuscada);
+		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping(path = "/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
-		Conta contaBuscada = contaService.buscar(id);
-
-		if (contaBuscada == null) {
-			return ResponseEntity.notFound().build();
-		}
-		
 		contaService.remover(id);
-		
-		return ResponseEntity.ok().build();
+		return ResponseEntity.noContent().build();
 	}
+	
+	@GetMapping(path = "/page")
+	public ResponseEntity<Page<ContaDTO>> buscaPaginada(
+			@RequestParam(value="page", defaultValue="0") Integer page, 
+			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
+			@RequestParam(value="orderBy", defaultValue="nome") String orderBy, 
+			@RequestParam(value="direction", defaultValue="ASC") String direction) {
+		
+		Page<Conta> list = contaService.buscaPaginada(page, linesPerPage, orderBy, direction);
+		Page<ContaDTO> listDto = list.map(obj -> new ContaDTO(obj));  
+		
+		return ResponseEntity.ok().body(listDto);
+	}
+
 }

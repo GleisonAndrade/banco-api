@@ -24,20 +24,17 @@ import br.com.gleisonandrade.bancoapi.domain.enuns.TipoDeConta;
 @Entity
 public class Conta implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String numero;
-	private String senha;
-	private Double saldo = 0.0;
+	private String senha;	
 	
 	@Enumerated(EnumType.STRING)
-	private TipoDeConta tipo;
+	private TipoDeConta tipo;	
+	private Double saldo = 0.0;	
 	
 	@ManyToOne
 	@JoinColumn(name="cliente_id")
@@ -46,7 +43,6 @@ public class Conta implements Serializable{
 	@ManyToOne
 	@JoinColumn(name="agencia_id")
 	private Agencia agencia;
-	
 	
 	public Conta() {
 	}
@@ -65,6 +61,27 @@ public class Conta implements Serializable{
 		this.cliente = cliente;
 		this.agencia = agencia;
 		this.senha = senha;
+		this.saldo = saldo;
+	}
+
+	/**
+	 * @param numero
+	 * @param senha
+	 * @param tipo
+	 * @param saldo
+	 */
+	public Conta(String numero, String senha, TipoDeConta tipo, Double saldo) {
+		super();
+		this.numero = numero;
+		this.tipo = tipo;
+		this.senha = senha;
+		this.saldo = saldo;
+	}
+
+	public Conta(Long id, String numero, TipoDeConta tipo, Double saldo) {
+		super();
+		this.numero = numero;
+		this.tipo = tipo;
 		this.saldo = saldo;
 	}
 

@@ -26,6 +26,17 @@ public class ClienteService extends GenericServiceImpl<Cliente, Long> {
 		super(clienteRepository);
 		this.clienteRepository = clienteRepository;
 	}
+	
+	@Override
+	public Cliente salvar(Cliente entity) {
+		Cliente clienteBuscado = buscarPorCpf(entity.getCpf());
+		
+		if(clienteBuscado == null) {
+			clienteBuscado = super.salvar(entity);
+		}
+		
+		return clienteBuscado;
+	}
 
 	@Override
 	protected Cliente atualizaDados(Cliente entity, Cliente newEntity) {
