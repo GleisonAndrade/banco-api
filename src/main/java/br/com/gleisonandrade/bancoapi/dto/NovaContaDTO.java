@@ -5,16 +5,13 @@ package br.com.gleisonandrade.bancoapi.dto;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.Negative;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.br.CPF;
-
-import br.com.gleisonandrade.bancoapi.domain.Cliente;
-import br.com.gleisonandrade.bancoapi.domain.Conta;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -25,7 +22,10 @@ public class NovaContaDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@NotNull(message="Preenchimento obrigatório")
-	private Long agenciaId;
+	private Long bancoId;
+	
+	@NotEmpty(message="Preenchimento obrigatório")
+	private String agenciaNumero;
 	
 	@NotEmpty(message="Preenchimento obrigatório")
 	@Pattern(regexp="\\d{5}-\\d{1}", message="O número da conta deve possuir o seguinte formato 00000-0 e ser formado apenas por números!")
@@ -37,7 +37,7 @@ public class NovaContaDTO implements Serializable{
 	@NotEmpty(message="Preenchimento obrigatório")
 	private String senha;
 	
-	@Negative
+	@PositiveOrZero(message="O saldo deve ser maior ou igual a zero")
 	@NotNull(message="Preenchimento obrigatório")
 	private Double saldo;
 	
@@ -49,29 +49,30 @@ public class NovaContaDTO implements Serializable{
 	@CPF(message="O CPF informado é inválido")
 	private String cpf;
 	
-//	public NovaContaDTO(Conta conta) {
-//		this.id = conta.getId();
+//	public NovaContaDTO (Conta conta, Cliente cliente) {
 //		this.numero = conta.getNumero();
 //		this.tipo = conta.getTipo().name();
+//		this.senha = conta.getSenha();
 //		this.saldo = conta.getSaldo();
-//	}	
+//		
+//		this.nome = cliente.getNome();
+//		this.cpf = cliente.getCpf();
+//	}
 	
-	public NovaContaDTO (Conta conta, Cliente cliente) {
-		this.numero = conta.getNumero();
-		this.tipo = conta.getTipo().name();
-		this.senha = conta.getSenha();
-		this.saldo = conta.getSaldo();
-		
-		this.nome = cliente.getNome();
-		this.cpf = cliente.getCpf();
+	public Long getBancoId() {
+		return bancoId;
 	}
 
-	public Long getAgenciaId() {
-		return agenciaId;
+	public void setBancoId(Long bancoId) {
+		this.bancoId = bancoId;
 	}
 
-	public void setAgenciaId(Long agenciaId) {
-		this.agenciaId = agenciaId;
+	public String getAgenciaNumero() {
+		return agenciaNumero;
+	}
+
+	public void setAgenciaNumero(String agenciaNumero) {
+		this.agenciaNumero = agenciaNumero;
 	}
 
 	public String getNumero() {
