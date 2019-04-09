@@ -12,7 +12,7 @@ import br.com.gleisonandrade.bancoapi.domain.Conta;
 import br.com.gleisonandrade.bancoapi.domain.Extrato;
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoOperacao;
 import br.com.gleisonandrade.bancoapi.repositories.ExtratoRepository;
-import br.com.gleisonandrade.bancoapi.services.exceptions.NegocioException;
+import br.com.gleisonandrade.bancoapi.util.DataUtil;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -33,14 +33,53 @@ public class ExtratoService extends GenericServiceImpl<Extrato, Long>{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	public Extrato gerar(Conta conta, TipoOperacao tipo, Double valor) {
-		if(TipoOperacao.SAQUE.equals(tipo)) {
-			Extrato extrato = new Extrato(Calendar.getInstance(), tipo, valor, conta);
-			extrato = extratoRepository.save(extrato);
-			return extrato;
-		}
-		
-		throw new NegocioException("Não foi possível gerar um extrato!");
+	
+	public Extrato gerar(Boolean credito,Conta conta, TipoOperacao tipo, Double valor) {
+		return gerar(credito, conta, tipo, valor, null);
 	}
+
+	public Extrato gerar(Boolean credito, Conta conta, TipoOperacao tipo, Double valor, Conta contaDestino) {
+		Calendar data = Calendar.getInstance();
+		
+		Extrato extrato = new Extrato(data, tipo, valor, conta);
+		extrato.setInformacoes(controiInformacoes(credito, conta, tipo, valor, contaDestino, data));
+		extrato = extratoRepository.save(extrato);
+		
+		return extrato;
+	}
+
+	private String controiInformacoes(Boolean credito, Conta conta, TipoOperacao tipo, Double valor, Conta contaDestino, Calendar data) {
+		if(credito) {
+			return informacaoCredito(conta, tipo, valor, contaDestino, data);
+		}else{
+			return informacaoDebito(conta, tipo, valor, contaDestino, data);
+		}
+	}
+
+	private String informacaoDebito(Conta conta, TipoOperacao tipo, Double valor, Conta contaDestino, Calendar data) {
+		if(TipoOperacao.TRANSFERENCIA.equals(tipo)) {
+			return String.format("DATA: %s\n"
+					+ "TRANFERÊNCIA REALIZADA DE R$ %.2f\n"
+					+ "PARA %s, CONTA: %s AG: %s", DataUtil.dataFormatada(data.getTime()), valor, conta.getCliente().getNome().split(" ")[0],
+					conta.getNumero(), conta.getAgencia().getNumero());
+		}else {
+			return String.format("DATA: %s\n"
+					+ "SAQUE DE R$ %.2f", DataUtil.dataFormatada(data.getTime()), valor);
+		}
+	}
+
+	private String informacaoCredito(Conta conta, TipoOperacao tipo, Double valor, Conta contaDestino, Calendar data) {
+		if(TipoOperacao.TRANSFERENCIA.equals(tipo)) {
+			return String.format("DATA: %s\n"
+					+ "TRANFERÊNCIA RECEBIDA DE R$ %.2f\n"
+					+ "POR %s, CONTA: %s AG: %s", DataUtil.dataFormatada(data.getTime()), valor, conta.getCliente().getNome().split(" ")[0],
+					conta.getNumero(), conta.getAgencia().getNumero());
+		}else {
+			return String.format("DATA: %s\n"
+					+ "DEPÓSITO DE R$ %.2f", DataUtil.dataFormatada(data.getTime()), valor);
+		}
+	}
+	
+	
+
 }
