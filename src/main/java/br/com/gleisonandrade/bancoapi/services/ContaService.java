@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.gleisonandrade.bancoapi.domain.Agencia;
@@ -40,6 +41,8 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 	private BancoService bancoService;
 	@Autowired
 	private ExtratoService extratoService;
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	public ContaService(ContaRepository contaRepository) {
 		super(contaRepository);
@@ -91,7 +94,7 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 		Conta conta = new Conta(contaDto.getNumero(), TipoDeConta.valueOf(contaDto.getTipo()),
 				contaDto.getSaldo());
 
-		Cliente cliente = new Cliente(contaDto.getNome(), contaDto.getCpf(), contaDto.getSenha());
+		Cliente cliente = new Cliente(contaDto.getNome(), contaDto.getCpf(), bCryptPasswordEncoder.encode(contaDto.getSenha()));
 		Agencia agencia = agenciaService.buscarPorNumero(contaDto.getBancoId(), contaDto.getAgenciaNumero());
 
 		conta.setCliente(cliente);

@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
  *
@@ -28,6 +30,7 @@ public class Cliente implements Serializable{
 	
 	private String nome;
 	private String cpf;
+	@JsonIgnore
 	private String senha;
 	
 
