@@ -33,7 +33,7 @@ public class NovaContaDTO implements Serializable{
 	private String numero;
 	
 	@NotEmpty(message="Preenchimento obrigatório")
-	@Pattern(regexp="/([POUPANCA|CORRENTE])/g", message="O valor informado é inválido, era esperado CORRENTE ou POUPANCA")
+//	@Pattern(regexp="/([POUPANCA|CORRENTE])/g", message="O valor informado é inválido, era esperado CORRENTE ou POUPANCA")
 	private String tipo;
 	
 	@NotEmpty(message="Preenchimento obrigatório")

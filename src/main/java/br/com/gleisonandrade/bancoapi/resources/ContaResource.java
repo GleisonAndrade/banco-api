@@ -26,6 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import br.com.gleisonandrade.bancoapi.domain.Conta;
 import br.com.gleisonandrade.bancoapi.dto.ContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.NovaContaDTO;
+import br.com.gleisonandrade.bancoapi.dto.SaqueDTO;
 import br.com.gleisonandrade.bancoapi.services.ContaService;
 
 /**
@@ -33,7 +34,7 @@ import br.com.gleisonandrade.bancoapi.services.ContaService;
  *
  */
 @RestController
-@RequestMapping("/banco-api/conta")
+@RequestMapping("/conta")
 public class ContaResource {
 	@Autowired
 	private ContaService contaService;
@@ -46,7 +47,7 @@ public class ContaResource {
 		return ResponseEntity.ok(contasDTO);
 	}
 	
-	@GetMapping(path = "/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<Conta> buscar(@PathVariable Long id) {
 		Conta contaBuscado = contaService.buscar(id);
 
@@ -66,6 +67,38 @@ public class ContaResource {
 				.toUri();
 		return ResponseEntity.created(uri).build();
 	}
+	
+	@PostMapping("/sacar")
+	public ResponseEntity<Void> sacar(@Valid @RequestBody SaqueDTO saqueDto) {
+		Conta conta = contaService.sacar(saqueDto);		
+		
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(conta.getNumero())
+				.toUri();
+		return ResponseEntity.created(uri).build();
+	}
+	
+//	@PostMapping
+//	public ResponseEntity<Void> depositar(@Valid @RequestBody NovaContaDTO contaDto) {
+//		//TODO
+//		return ResponseEntity.created(null).build();
+//	}
+//	
+//	@PostMapping
+//	public ResponseEntity<Void> transferir(@Valid @RequestBody NovaContaDTO contaDto) {
+//		//TODO
+//		return ResponseEntity.created(null).build();
+//	}
+	
+//	@GetMapping(path = "/{id}")
+//	public ResponseEntity<Conta> extrato(@PathVariable Long id) {
+//		Conta contaBuscado = contaService.buscar(id);
+//
+//		if (contaBuscado == null) {
+//			return ResponseEntity.notFound().build();
+//		}
+//
+//		return ResponseEntity.ok(contaBuscado);
+//	}
 
 	@PutMapping(path = "/{id}")
 	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody ContaDTO contaDto) {

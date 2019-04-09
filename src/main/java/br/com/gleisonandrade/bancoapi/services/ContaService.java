@@ -10,12 +10,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import br.com.gleisonandrade.bancoapi.domain.Agencia;
-import br.com.gleisonandrade.bancoapi.domain.Banco;
 import br.com.gleisonandrade.bancoapi.domain.Cliente;
 import br.com.gleisonandrade.bancoapi.domain.Conta;
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoDeConta;
+import br.com.gleisonandrade.bancoapi.domain.enuns.TipoOperacao;
 import br.com.gleisonandrade.bancoapi.dto.ContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.NovaContaDTO;
+import br.com.gleisonandrade.bancoapi.dto.SaqueDTO;
 import br.com.gleisonandrade.bancoapi.repositories.ContaRepository;
 import br.com.gleisonandrade.bancoapi.services.exceptions.IntegridadeDeDadosException;
 import br.com.gleisonandrade.bancoapi.services.exceptions.NegocioException;
@@ -35,6 +36,8 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 	private ClienteService clienteService;
 	@Autowired
 	private BancoService bancoService;
+	@Autowired
+	private ExtratoService extratoService;
 
 	public ContaService(ContaRepository contaRepository) {
 		super(contaRepository);
@@ -110,27 +113,53 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 	}
 
 	public Conta cadastrar(Conta conta) {
-		
-		//Verifiar se banco existe
-		bancoService.buscar(conta.getAgencia().getBanco().getId());
-		
-		// Verificar se existe a agência
-		Agencia agencia = agenciaService.buscar(conta.getAgencia().getId());
 
-		// Verificar se já existe conta com o número informado na agência do banco
 		try {
-			buscarPorNumeroAgenciaNumeroBancoId(conta.getNumero(), conta.getAgencia().getNumero(), conta.getAgencia().getBanco().getId());
+			verificaConta(conta.getNumero(), conta.getAgencia().getNumero(), conta.getAgencia().getBanco().getId());
 		} catch (ObjetoNaoEncontradoException e) {
 			// Se cliente não existir persiste um novo, caso exista buscar para adicionar
 
 			Cliente cliente = clienteService.salvar(conta.getCliente());
+			Conta novaConta = new Conta(conta.getNumero(), conta.getTipo(), cliente, conta.getAgencia(), conta.getSenha(), conta.getSaldo());
 
-			Conta novaConta = new Conta(conta.getNumero(), conta.getTipo(), cliente, agencia, conta.getSenha(), conta.getSaldo());
-			
 			return salvar(novaConta);
 		}
 
 		throw new NegocioException("Já existe uma conta cadastrada na agência com o número informado!");
+	}
+
+	public Conta verificaConta(String contaNumero, String agenciaNumero, Long bancoId) {
+		// Verifiar se banco existe
+		bancoService.buscar(bancoId);
+
+		// Verificar se existe a agência
+		agenciaService.buscarPorNumero(bancoId, agenciaNumero);
+		
+		//Verificar se existe a conta com os dados informados
+		Conta conta = buscarPorNumeroAgenciaNumeroBancoId(contaNumero, agenciaNumero, bancoId);
+		
+		return conta;
+	}
+
+	public Conta sacar(SaqueDTO saqueDto) {
+		Conta conta = verificaConta(saqueDto.getContaNumero(), saqueDto.getAgenciaNumero(), saqueDto.getBancoId());
+		
+		if(saqueDto.getValor() <= conta.getSaldo()) {
+			conta = debitar(conta, saqueDto.getValor());
+			return conta;
+		}
+		
+		throw new NegocioException(String.format("A conta não possuí saldo suficiente para essa operação! Saldo: {0}, valor do saque {1}",
+				conta.getSaldo(), saqueDto.getValor()));
+	}
+
+	private Conta debitar(Conta conta, Double valor) {
+		conta.setSaldo(conta.getSaldo() - valor);
+		conta = contaRepository.save(conta);
+		
+		extratoService.gerar(conta, TipoOperacao.SAQUE, valor);
+		
+		return conta;
 	}
 
 }
