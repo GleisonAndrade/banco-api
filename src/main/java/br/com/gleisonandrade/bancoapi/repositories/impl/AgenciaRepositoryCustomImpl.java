@@ -8,13 +8,12 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.gleisonandrade.bancoapi.domain.Agencia;
 import br.com.gleisonandrade.bancoapi.repositories.custom.AgenciaRepositoryCustom;
@@ -25,7 +24,7 @@ import br.com.gleisonandrade.bancoapi.repositories.custom.AgenciaRepositoryCusto
  */
 public class AgenciaRepositoryCustomImpl implements AgenciaRepositoryCustom {
 
-	@Autowired
+	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Override

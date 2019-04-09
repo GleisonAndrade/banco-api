@@ -7,13 +7,12 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.gleisonandrade.bancoapi.domain.Extrato;
 import br.com.gleisonandrade.bancoapi.repositories.custom.ExtratoRepositoryCustom;
@@ -24,7 +23,7 @@ import br.com.gleisonandrade.bancoapi.repositories.custom.ExtratoRepositoryCusto
  */
 public class ExtratoRepositoryCustomImpl implements ExtratoRepositoryCustom {
 
-	@Autowired
+	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Override
