@@ -9,6 +9,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import br.com.gleisonandrade.bancoapi.domain.Banco;
+
 @Service
 public abstract class GenericServiceImpl<E, K> implements GenericService<E, K> {
 
@@ -74,5 +76,9 @@ public abstract class GenericServiceImpl<E, K> implements GenericService<E, K> {
 	public Page<E> buscaPaginada(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return jpaRepository.findAll(pageRequest);
+	}
+	
+	public List<E> saveAll(List<E> entities) {
+		return jpaRepository.saveAll(entities);
 	}
 }
