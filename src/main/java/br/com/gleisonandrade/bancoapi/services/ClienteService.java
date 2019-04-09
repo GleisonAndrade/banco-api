@@ -29,9 +29,11 @@ public class ClienteService extends GenericServiceImpl<Cliente, Long> {
 	
 	@Override
 	public Cliente salvar(Cliente entity) {
-		Cliente clienteBuscado = buscarPorCpf(entity.getCpf());
+		Cliente clienteBuscado = null;
 		
-		if(clienteBuscado == null) {
+		try {
+			clienteBuscado = buscarPorCpf(entity.getCpf());
+		} catch (ObjetoNaoEncontradoException e) {
 			clienteBuscado = super.salvar(entity);
 		}
 		

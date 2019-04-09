@@ -28,6 +28,7 @@ import br.com.gleisonandrade.bancoapi.dto.ContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.DepositoDTO;
 import br.com.gleisonandrade.bancoapi.dto.NovaContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.SaqueDTO;
+import br.com.gleisonandrade.bancoapi.dto.TransferenciaDTO;
 import br.com.gleisonandrade.bancoapi.services.ContaService;
 
 /**
@@ -39,7 +40,7 @@ import br.com.gleisonandrade.bancoapi.services.ContaService;
 public class ContaResource {
 	@Autowired
 	private ContaService contaService;
-	
+
 	@GetMapping
 	public ResponseEntity<List<ContaDTO>> listar() {
 		List<Conta> contas = contaService.listarTodos();
@@ -47,7 +48,7 @@ public class ContaResource {
 
 		return ResponseEntity.ok(contasDTO);
 	}
-	
+
 	@GetMapping("/{id}")
 	public ResponseEntity<Conta> buscar(@PathVariable Long id) {
 		Conta contaBuscado = contaService.buscar(id);
@@ -68,67 +69,58 @@ public class ContaResource {
 				.toUri();
 		return ResponseEntity.created(uri).build();
 	}
-	
-	@PostMapping("/sacar")
-	public ResponseEntity<Void> sacar(@Valid @RequestBody SaqueDTO saqueDto) {
-		Conta conta = contaService.sacar(saqueDto);		
-		
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(conta.getNumero())
-				.toUri();
-		return ResponseEntity.created(uri).build();
-	}
-	
-	@PostMapping("/depositar")
-	public ResponseEntity<Void> depositar(@Valid @RequestBody DepositoDTO depositoDTO) {
-Conta conta = contaService.depositar(depositoDTO);		
-		
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(conta.getNumero())
-				.toUri();
-		return ResponseEntity.created(uri).build();
-	}
-	
-//	@PostMapping
-//	public ResponseEntity<Void> transferir(@Valid @RequestBody NovaContaDTO contaDto) {
-//		//TODO
-//		return ResponseEntity.created(null).build();
-//	}
-	
-//	@GetMapping(path = "/{id}")
-//	public ResponseEntity<Conta> extrato(@PathVariable Long id) {
-//		Conta contaBuscado = contaService.buscar(id);
-//
-//		if (contaBuscado == null) {
-//			return ResponseEntity.notFound().build();
-//		}
-//
-//		return ResponseEntity.ok(contaBuscado);
-//	}
 
-	@PutMapping(path = "/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody ContaDTO contaDto) {
 		Conta contaBuscada = contaService.converteDTOEmEntidade(contaDto);
 		contaBuscada.setId(id);
 		contaBuscada = contaService.atualizar(contaBuscada);
-
+		
 		return ResponseEntity.noContent().build();
 	}
-
-	@DeleteMapping(path = "/{id}")
+	
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
 		contaService.remover(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping(path = "/page")
-	public ResponseEntity<Page<ContaDTO>> buscaPaginada(
-			@RequestParam(value="page", defaultValue="0") Integer page, 
-			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
-			@RequestParam(value="orderBy", defaultValue="nome") String orderBy, 
-			@RequestParam(value="direction", defaultValue="ASC") String direction) {
-		
+	@PostMapping("/sacar")
+	public ResponseEntity<Void> sacar(@Valid @RequestBody SaqueDTO saqueDto) {
+		Conta conta = contaService.sacar(saqueDto);
+
+		URI uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/conta/{id}").build()
+				.expand(conta.getId()).toUri();
+		return ResponseEntity.created(uri).build();
+	}
+
+	@PostMapping("/depositar")
+	public ResponseEntity<Void> depositar(@Valid @RequestBody DepositoDTO depositoDTO) {
+		Conta conta = contaService.depositar(depositoDTO);
+
+		URI uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/conta/{id}").build()
+				.expand(conta.getId()).toUri();
+		return ResponseEntity.created(uri).build();
+	}
+
+	@PostMapping("/transferir")
+	public ResponseEntity<Void> transferir(@Valid @RequestBody TransferenciaDTO transferenciaDTO) {
+		Conta conta = contaService.transferir(transferenciaDTO);
+
+		URI uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/conta/{id}").build()
+				.expand(conta.getId()).toUri();
+		return ResponseEntity.created(uri).build();
+	}
+
+	@GetMapping("/page")
+	public ResponseEntity<Page<ContaDTO>> buscaPaginada(@RequestParam(value = "page", defaultValue = "0") Integer page,
+			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
+			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
+			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
+
 		Page<Conta> list = contaService.buscaPaginada(page, linesPerPage, orderBy, direction);
-		Page<ContaDTO> listDto = list.map(obj -> new ContaDTO(obj));  
-		
+		Page<ContaDTO> listDto = list.map(obj -> new ContaDTO(obj));
+
 		return ResponseEntity.ok().body(listDto);
 	}
 
