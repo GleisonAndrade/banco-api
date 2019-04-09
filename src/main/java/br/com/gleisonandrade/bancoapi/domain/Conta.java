@@ -30,7 +30,6 @@ public class Conta implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String numero;
-	private String senha;	
 	
 	@Enumerated(EnumType.STRING)
 	private TipoDeConta tipo;	
@@ -54,30 +53,34 @@ public class Conta implements Serializable{
 	 * @param agencia
 	 * @param saldo
 	 */
-	public Conta(String numero, TipoDeConta tipo, Cliente cliente, Agencia agencia, String senha, Double saldo) {
+	public Conta(String numero, TipoDeConta tipo, Cliente cliente, Agencia agencia, Double saldo) {
 		super();
 		this.numero = numero;
 		this.tipo = tipo;
 		this.cliente = cliente;
 		this.agencia = agencia;
-		this.senha = senha;
+		this.saldo = saldo;
+	}
+
+
+	/**
+	 * @param numero
+	 * @param tipo
+	 * @param saldo
+	 */
+	public Conta(String numero, TipoDeConta tipo, Double saldo) {
+		super();
+		this.numero = numero;
+		this.tipo = tipo;
 		this.saldo = saldo;
 	}
 
 	/**
+	 * @param id
 	 * @param numero
-	 * @param senha
 	 * @param tipo
 	 * @param saldo
 	 */
-	public Conta(String numero, String senha, TipoDeConta tipo, Double saldo) {
-		super();
-		this.numero = numero;
-		this.tipo = tipo;
-		this.senha = senha;
-		this.saldo = saldo;
-	}
-
 	public Conta(Long id, String numero, TipoDeConta tipo, Double saldo) {
 		super();
 		this.numero = numero;
@@ -123,14 +126,6 @@ public class Conta implements Serializable{
 
 	public void setAgencia(Agencia agencia) {
 		this.agencia = agencia;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
 	}
 
 	public Double getSaldo() {

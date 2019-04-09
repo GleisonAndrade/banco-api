@@ -28,6 +28,8 @@ public class Cliente implements Serializable{
 	
 	private String nome;
 	private String cpf;
+	private String senha;
+	
 
 	public Cliente() {
 	}
@@ -37,10 +39,11 @@ public class Cliente implements Serializable{
 	 * @param cpf
 	 * @param contas
 	 */
-	public Cliente(String nome, String cpf) {
+	public Cliente(String nome, String cpf, String senha) {
 		super();
 		this.nome = nome;
 		this.cpf = cpf;
+		this.senha = senha;
 	}
 
 	public Long getId() {
@@ -65,6 +68,14 @@ public class Cliente implements Serializable{
 
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
 	}
 
 	@Override

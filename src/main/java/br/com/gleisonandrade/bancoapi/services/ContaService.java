@@ -63,7 +63,7 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 
 	@Override
 	protected Conta atualizaDados(Conta entity, Conta newEntity) {
-		Conta conta = new Conta(newEntity.getNumero(), newEntity.getSenha(), newEntity.getTipo(), newEntity.getSaldo());
+		Conta conta = new Conta(newEntity.getNumero(), newEntity.getTipo(), newEntity.getSaldo());
 		conta.setId(entity.getId());
 		conta.setCliente(entity.getCliente());
 		conta.setAgencia(entity.getAgencia());
@@ -88,10 +88,10 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 	}
 
 	public Conta converteDTOEmEntidade(NovaContaDTO contaDto) {
-		Conta conta = new Conta(contaDto.getNumero(), contaDto.getSenha(), TipoDeConta.valueOf(contaDto.getTipo()),
+		Conta conta = new Conta(contaDto.getNumero(), TipoDeConta.valueOf(contaDto.getTipo()),
 				contaDto.getSaldo());
 
-		Cliente cliente = new Cliente(contaDto.getNome(), contaDto.getCpf());
+		Cliente cliente = new Cliente(contaDto.getNome(), contaDto.getCpf(), contaDto.getSenha());
 		Agencia agencia = agenciaService.buscarPorNumero(contaDto.getBancoId(), contaDto.getAgenciaNumero());
 
 		conta.setCliente(cliente);
@@ -123,7 +123,7 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 
 			Cliente cliente = clienteService.salvar(conta.getCliente());
 			Conta novaConta = new Conta(conta.getNumero(), conta.getTipo(), cliente, conta.getAgencia(),
-					conta.getSenha(), conta.getSaldo());
+					conta.getSaldo());
 
 			return salvar(novaConta);
 		}
