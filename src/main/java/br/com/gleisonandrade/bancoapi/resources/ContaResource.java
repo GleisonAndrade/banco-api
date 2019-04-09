@@ -25,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.gleisonandrade.bancoapi.domain.Conta;
 import br.com.gleisonandrade.bancoapi.dto.ContaDTO;
+import br.com.gleisonandrade.bancoapi.dto.DepositoDTO;
 import br.com.gleisonandrade.bancoapi.dto.NovaContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.SaqueDTO;
 import br.com.gleisonandrade.bancoapi.services.ContaService;
@@ -77,12 +78,15 @@ public class ContaResource {
 		return ResponseEntity.created(uri).build();
 	}
 	
-//	@PostMapping
-//	public ResponseEntity<Void> depositar(@Valid @RequestBody NovaContaDTO contaDto) {
-//		//TODO
-//		return ResponseEntity.created(null).build();
-//	}
-//	
+	@PostMapping("/depositar")
+	public ResponseEntity<Void> depositar(@Valid @RequestBody DepositoDTO depositoDTO) {
+Conta conta = contaService.depositar(depositoDTO);		
+		
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(conta.getNumero())
+				.toUri();
+		return ResponseEntity.created(uri).build();
+	}
+	
 //	@PostMapping
 //	public ResponseEntity<Void> transferir(@Valid @RequestBody NovaContaDTO contaDto) {
 //		//TODO

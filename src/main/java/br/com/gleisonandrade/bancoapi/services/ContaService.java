@@ -15,8 +15,10 @@ import br.com.gleisonandrade.bancoapi.domain.Conta;
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoDeConta;
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoOperacao;
 import br.com.gleisonandrade.bancoapi.dto.ContaDTO;
+import br.com.gleisonandrade.bancoapi.dto.DepositoDTO;
 import br.com.gleisonandrade.bancoapi.dto.NovaContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.SaqueDTO;
+import br.com.gleisonandrade.bancoapi.dto.TransferenciaDTO;
 import br.com.gleisonandrade.bancoapi.repositories.ContaRepository;
 import br.com.gleisonandrade.bancoapi.services.exceptions.IntegridadeDeDadosException;
 import br.com.gleisonandrade.bancoapi.services.exceptions.NegocioException;
@@ -120,7 +122,8 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 			// Se cliente não existir persiste um novo, caso exista buscar para adicionar
 
 			Cliente cliente = clienteService.salvar(conta.getCliente());
-			Conta novaConta = new Conta(conta.getNumero(), conta.getTipo(), cliente, conta.getAgencia(), conta.getSenha(), conta.getSaldo());
+			Conta novaConta = new Conta(conta.getNumero(), conta.getTipo(), cliente, conta.getAgencia(),
+					conta.getSenha(), conta.getSaldo());
 
 			return salvar(novaConta);
 		}
@@ -134,32 +137,71 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 
 		// Verificar se existe a agência
 		agenciaService.buscarPorNumero(bancoId, agenciaNumero);
-		
-		//Verificar se existe a conta com os dados informados
+
+		// Verificar se existe a conta com os dados informados
 		Conta conta = buscarPorNumeroAgenciaNumeroBancoId(contaNumero, agenciaNumero, bancoId);
-		
+
 		return conta;
 	}
 
 	public Conta sacar(SaqueDTO saqueDto) {
 		Conta conta = verificaConta(saqueDto.getContaNumero(), saqueDto.getAgenciaNumero(), saqueDto.getBancoId());
-		
-		if(saqueDto.getValor() <= conta.getSaldo()) {
-			conta = debitar(conta, saqueDto.getValor());
+
+		return debitar(conta, saqueDto.getValor());
+	}
+
+	public Conta depositar(DepositoDTO depositoDTO) {
+		Conta conta = verificaConta(depositoDTO.getContaNumero(), depositoDTO.getAgenciaNumero(),
+				depositoDTO.getBancoId());
+
+		return creditar(conta, depositoDTO.getValor());
+	}
+
+	public Conta transferir(TransferenciaDTO transferenciaDTO) {
+		Conta contaOrigem = verificaConta(transferenciaDTO.getContaOrigemNumero(),
+				transferenciaDTO.getAgenciaOrigemNumero(), transferenciaDTO.getBancoOrigemId());
+		Conta contaDestino = verificaConta(transferenciaDTO.getContaDestinoNumero(),
+				transferenciaDTO.getAgenciaDestinoNumero(), transferenciaDTO.getBancoDestinoId());
+
+		return transferir(contaOrigem, contaDestino, transferenciaDTO.getValor());		
+	}
+	
+	private Conta debitar(Conta conta, Double valor) {
+		return debitar(conta, valor, null, null);
+	}
+
+	private Conta debitar(Conta conta, Double valor, TipoOperacao tipo, Conta contaDestino) {
+		if (valor <= conta.getSaldo()) {
+			conta.setSaldo(conta.getSaldo() - valor);
+			conta = contaRepository.save(conta);
+
+			extratoService.gerar(false, conta, tipo == null ? TipoOperacao.SAQUE : tipo, valor, contaDestino);
+
 			return conta;
 		}
-		
-		throw new NegocioException(String.format("A conta não possuí saldo suficiente para essa operação! Saldo: {0}, valor do saque {1}",
-				conta.getSaldo(), saqueDto.getValor()));
+
+		throw new NegocioException(
+				String.format("A conta não possuí saldo suficiente para essa operação! Saldo: {0}, valor a ser debitado {1}",
+						conta.getSaldo(), valor));
+	}
+	
+	private Conta creditar(Conta conta, Double valor) {
+		return creditar(conta, valor, null, null);
 	}
 
-	private Conta debitar(Conta conta, Double valor) {
-		conta.setSaldo(conta.getSaldo() - valor);
+	private Conta creditar(Conta conta, Double valor, TipoOperacao tipo, Conta contaOrigem) {
+		conta.setSaldo(conta.getSaldo() + valor);
 		conta = contaRepository.save(conta);
-		
-		extratoService.gerar(conta, TipoOperacao.SAQUE, valor);
-		
+
+		extratoService.gerar(true, conta, tipo == null ? TipoOperacao.DEPOSITO : tipo, valor, contaOrigem);
+
 		return conta;
 	}
-
+	
+	private Conta transferir(Conta contaOrigem, Conta contaDestino, Double valor) {
+		contaOrigem = debitar(contaOrigem, valor, TipoOperacao.TRANSFERENCIA, contaDestino);
+		contaDestino = creditar(contaDestino, valor, TipoOperacao.TRANSFERENCIA, contaOrigem);
+		
+		return contaOrigem;
+	}
 }
