@@ -4,6 +4,7 @@
 package br.com.gleisonandrade.bancoapi.services;
 
 import java.util.Calendar;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class ExtratoService extends GenericServiceImpl<Extrato, Long>{
 
 	private String controiInformacoes(Boolean credito, Conta conta, TipoOperacao tipo, Double valor, Conta contaDestino, Calendar data) {
 		if(credito) {
-			return informacaoCredito(conta, tipo, valor, contaDestino, data);
+			return informacaoCredito(contaDestino, tipo, valor, conta, data);
 		}else{
 			return informacaoDebito(conta, tipo, valor, contaDestino, data);
 		}
@@ -72,12 +73,16 @@ public class ExtratoService extends GenericServiceImpl<Extrato, Long>{
 		if(TipoOperacao.TRANSFERENCIA.equals(tipo)) {
 			return String.format("DATA: %s\n"
 					+ "TRANFERÊNCIA RECEBIDA DE R$ %.2f\n"
-					+ "POR %s, CONTA: %s AG: %s", DataUtil.dataFormatada(data.getTime()), valor, conta.getCliente().getNome().split(" ")[0],
-					conta.getNumero(), conta.getAgencia().getNumero());
+					+ "POR %s, CONTA: %s AG: %s", DataUtil.dataFormatada(data.getTime()), valor, contaDestino.getCliente().getNome().split(" ")[0],
+					contaDestino.getNumero(), contaDestino.getAgencia().getNumero());
 		}else {
 			return String.format("DATA: %s\n"
 					+ "DEPÓSITO DE R$ %.2f", DataUtil.dataFormatada(data.getTime()), valor);
 		}
+	}
+
+	public List<Extrato> listarTodosPorContaId(Long id) {
+		return extratoRepository.listarTodosPorContaId(id);
 	}
 	
 	
