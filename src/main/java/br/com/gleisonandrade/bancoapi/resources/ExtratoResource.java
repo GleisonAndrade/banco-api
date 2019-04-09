@@ -46,7 +46,7 @@ public class ExtratoResource {
 //		return ResponseEntity.created(null).build();
 //	}
 //	
-//	@GetMapping(path = "/page")
+//	@GetMapping("/page")
 //	public ResponseEntity<Page<ContaDTO>> buscaPaginada(@RequestParam(value = "page", defaultValue = "0") Integer page,
 //			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
 //			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,

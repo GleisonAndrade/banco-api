@@ -53,7 +53,7 @@ public class BancoResource {
 		return ResponseEntity.ok(bancosDTO);
 	}
 
-	@GetMapping(path = "/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<Banco> buscar(@PathVariable Long id) {
 		Banco bancoBuscado = bancoService.buscar(id);
 
@@ -74,7 +74,7 @@ public class BancoResource {
 		return ResponseEntity.created(uri).build();
 	}
 
-	@PutMapping(path = "/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody BancoDTO bancoDto) {
 		Banco bancoBuscada = bancoService.converteDTOEmEntidade(bancoDto);
 		bancoBuscada.setId(id);
@@ -83,13 +83,13 @@ public class BancoResource {
 		return ResponseEntity.noContent().build();
 	}
 
-	@DeleteMapping(path = "/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
 		bancoService.remover(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping(path = "/page")
+	@GetMapping("/page")
 	public ResponseEntity<Page<BancoDTO>> buscaPaginada(
 			@RequestParam(value="page", defaultValue="0") Integer page, 
 			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
@@ -102,7 +102,7 @@ public class BancoResource {
 		return ResponseEntity.ok().body(listDto);
 	}
 	
-	@GetMapping(path = "/{id}/agencia")
+	@GetMapping("/{id}/agencia")
 	public ResponseEntity<List<AgenciaDTO>> buscarAgencias(@PathVariable Long id) {
 		List<Agencia> agencias = agenciaService.buscarPorBanco(id);
 		List<AgenciaDTO> agenciasDTO = agencias.stream().map(agencia -> new AgenciaDTO(agencia)).collect(Collectors.toList());
@@ -110,7 +110,7 @@ public class BancoResource {
 		return ResponseEntity.ok(agenciasDTO);
 	}
 	
-	@GetMapping(path = "/{id}/agencia/{numero}")
+	@GetMapping("/{id}/agencia/{numero}")
 	public ResponseEntity<AgenciaDTO> buscarAgencia(@PathVariable Long id, @PathVariable String numero) {
 		Agencia agenciaBuscada = agenciaService.buscarPorNumero(id, numero);
 

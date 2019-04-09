@@ -44,7 +44,7 @@ public class AgenciaResource {
 		return ResponseEntity.ok(agenciasDTO);
 	}
 	
-	@GetMapping(path = "/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<Agencia> buscar(@PathVariable Long id) {
 		Agencia agenciaBuscado = agenciaService.buscar(id);
 
@@ -65,7 +65,7 @@ public class AgenciaResource {
 		return ResponseEntity.created(uri).build();
 	}
 
-	@PutMapping(path = "/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody AgenciaDTO agenciaDto) {
 		Agencia agenciaBuscada = agenciaService.converteDTOEmEntidade(agenciaDto);
 		agenciaBuscada.setId(id);
@@ -74,13 +74,13 @@ public class AgenciaResource {
 		return ResponseEntity.noContent().build();
 	}
 
-	@DeleteMapping(path = "/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
 		agenciaService.remover(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping(path = "/page")
+	@GetMapping("/page")
 	public ResponseEntity<Page<AgenciaDTO>> buscaPaginada(
 			@RequestParam(value="page", defaultValue="0") Integer page, 
 			@RequestParam(value="linesPerPage", defaultValue="24") Integer linesPerPage, 
