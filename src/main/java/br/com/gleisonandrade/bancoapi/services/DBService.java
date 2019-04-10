@@ -53,8 +53,10 @@ public class DBService {
 
 		Cliente cliente = new Cliente("Gleison Andrade", "756.401.413-01", bCryptPasswordEncoder.encode("123456"));
 		Cliente cliente2 = new Cliente("Francisco Andrade", "672.281.173-52", bCryptPasswordEncoder.encode("123456"));
+		
+		Cliente admin = new Cliente("Admin", "952.797.143-80", bCryptPasswordEncoder.encode("123456"));
 
-		clienteService.saveAll(Arrays.asList(cliente, cliente2));
+		clienteService.saveAll(Arrays.asList(cliente, cliente2, admin));
 
 		Conta conta = new Conta("00001-0", TipoDeConta.CORRENTE, cliente, b1_ag1, 0.0);
 		Conta conta2 = new Conta("00002-0", TipoDeConta.POUPANCA, cliente2, b2_ag1, 0.0);
