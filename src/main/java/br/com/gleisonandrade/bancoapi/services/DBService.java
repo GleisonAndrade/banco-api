@@ -31,8 +31,6 @@ public class DBService {
 	@Autowired
 	private BancoService bancoService;
 	@Autowired
-	private ExtratoService extratoService;
-	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	public void instantiateTestDatabase() {
