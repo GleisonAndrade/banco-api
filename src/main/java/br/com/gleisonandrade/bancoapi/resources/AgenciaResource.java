@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,7 @@ public class AgenciaResource {
 	@Autowired
 	private AgenciaService agenciaService;
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping
 	public ResponseEntity<List<AgenciaDTO>> listar() {
 		List<Agencia> agencias = agenciaService.listarTodos();
@@ -44,6 +46,7 @@ public class AgenciaResource {
 		return ResponseEntity.ok(agenciasDTO);
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/{id}")
 	public ResponseEntity<Agencia> buscar(@PathVariable Long id) {
 		Agencia agenciaBuscado = agenciaService.buscar(id);
@@ -55,7 +58,8 @@ public class AgenciaResource {
 		return ResponseEntity.ok(agenciaBuscado);
 	}
 
-	@PostMapping()
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@PostMapping
 	public ResponseEntity<Void> adicionar(@Valid @RequestBody NovaAgenciaDTO agenciaDto) {
 		Agencia agenciaCadastrado = agenciaService.converteDTOEmEntidade(agenciaDto);
 		agenciaCadastrado = agenciaService.salvar(agenciaCadastrado);
@@ -65,6 +69,7 @@ public class AgenciaResource {
 		return ResponseEntity.created(uri).build();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody AgenciaDTO agenciaDto) {
 		Agencia agenciaBuscada = agenciaService.converteDTOEmEntidade(agenciaDto);
@@ -74,12 +79,14 @@ public class AgenciaResource {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
 		agenciaService.remover(id);
 		return ResponseEntity.noContent().build();
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/page")
 	public ResponseEntity<Page<AgenciaDTO>> buscaPaginada(
 			@RequestParam(value="page", defaultValue="0") Integer page, 

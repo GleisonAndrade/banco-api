@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +46,7 @@ public class BancoResource {
 	@Autowired
 	private AgenciaService agenciaService;
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping
 	public ResponseEntity<List<BancoDTO>> listar() {
 		List<Banco> bancos = bancoService.listarTodos();
@@ -53,6 +55,7 @@ public class BancoResource {
 		return ResponseEntity.ok(bancosDTO);
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/{id}")
 	public ResponseEntity<Banco> buscar(@PathVariable Long id) {
 		Banco bancoBuscado = bancoService.buscar(id);
@@ -64,6 +67,7 @@ public class BancoResource {
 		return ResponseEntity.ok(bancoBuscado);
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<Void> adicionar(@Valid @RequestBody BancoDTO bancoDto) {
 		Banco bancoCadastrado = bancoService.converteDTOEmEntidade(bancoDto);
@@ -74,6 +78,7 @@ public class BancoResource {
 		return ResponseEntity.created(uri).build();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody BancoDTO bancoDto) {
 		Banco bancoBuscada = bancoService.converteDTOEmEntidade(bancoDto);
@@ -83,12 +88,14 @@ public class BancoResource {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
 		bancoService.remover(id);
 		return ResponseEntity.noContent().build();
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/page")
 	public ResponseEntity<Page<BancoDTO>> buscaPaginada(
 			@RequestParam(value="page", defaultValue="0") Integer page, 
@@ -102,6 +109,7 @@ public class BancoResource {
 		return ResponseEntity.ok().body(listDto);
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/{id}/agencia")
 	public ResponseEntity<List<AgenciaDTO>> buscarAgencias(@PathVariable Long id) {
 		List<Agencia> agencias = agenciaService.buscarPorBanco(id);
@@ -110,6 +118,7 @@ public class BancoResource {
 		return ResponseEntity.ok(agenciasDTO);
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/{id}/agencia/{numero}")
 	public ResponseEntity<AgenciaDTO> buscarAgencia(@PathVariable Long id, @PathVariable String numero) {
 		Agencia agenciaBuscada = agenciaService.buscarPorNumero(id, numero);

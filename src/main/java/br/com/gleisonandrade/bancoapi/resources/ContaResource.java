@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +42,7 @@ public class ContaResource {
 	@Autowired
 	private ContaService contaService;
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping
 	public ResponseEntity<List<ContaDTO>> listar() {
 		List<Conta> contas = contaService.listarTodos();
@@ -60,6 +62,7 @@ public class ContaResource {
 		return ResponseEntity.ok(contaBuscado);
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<Void> adicionar(@Valid @RequestBody NovaContaDTO contaDto) {
 		Conta contaCadastrado = contaService.converteDTOEmEntidade(contaDto);
@@ -70,6 +73,7 @@ public class ContaResource {
 		return ResponseEntity.created(uri).build();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody ContaDTO contaDto) {
 		Conta contaBuscada = contaService.converteDTOEmEntidade(contaDto);
@@ -79,6 +83,7 @@ public class ContaResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
 		contaService.remover(id);
@@ -112,6 +117,7 @@ public class ContaResource {
 		return ResponseEntity.created(uri).build();
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/page")
 	public ResponseEntity<Page<ContaDTO>> buscaPaginada(@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
