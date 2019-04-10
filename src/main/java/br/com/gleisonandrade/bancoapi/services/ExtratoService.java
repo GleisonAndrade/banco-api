@@ -24,6 +24,9 @@ public class ExtratoService extends GenericServiceImpl<Extrato, Long>{
 	@Autowired
 	private ExtratoRepository extratoRepository;
 	
+	@Autowired
+	private DataUtil dataUtil;
+	
 	public ExtratoService(ExtratoRepository extratoRepository) {
 		super(extratoRepository);
 		this.extratoRepository = extratoRepository;
@@ -61,11 +64,11 @@ public class ExtratoService extends GenericServiceImpl<Extrato, Long>{
 		if(TipoOperacao.TRANSFERENCIA.equals(tipo)) {
 			return String.format("DATA: %s\n"
 					+ "TRANFERÊNCIA REALIZADA DE R$ %.2f\n"
-					+ "PARA %s, CONTA: %s AG: %s", DataUtil.dataFormatada(data.getTime()), valor, conta.getCliente().getNome().split(" ")[0],
+					+ "PARA %s, CONTA: %s AG: %s", dataUtil.dataFormatada(data.getTime()), valor, conta.getCliente().getNome().split(" ")[0],
 					conta.getNumero(), conta.getAgencia().getNumero());
 		}else {
 			return String.format("DATA: %s\n"
-					+ "SAQUE DE R$ %.2f", DataUtil.dataFormatada(data.getTime()), valor);
+					+ "SAQUE DE R$ %.2f", dataUtil.dataFormatada(data.getTime()), valor);
 		}
 	}
 
@@ -73,11 +76,11 @@ public class ExtratoService extends GenericServiceImpl<Extrato, Long>{
 		if(TipoOperacao.TRANSFERENCIA.equals(tipo)) {
 			return String.format("DATA: %s\n"
 					+ "TRANFERÊNCIA RECEBIDA DE R$ %.2f\n"
-					+ "POR %s, CONTA: %s AG: %s", DataUtil.dataFormatada(data.getTime()), valor, contaDestino.getCliente().getNome().split(" ")[0],
+					+ "POR %s, CONTA: %s AG: %s", dataUtil.dataFormatada(data.getTime()), valor, contaDestino.getCliente().getNome().split(" ")[0],
 					contaDestino.getNumero(), contaDestino.getAgencia().getNumero());
 		}else {
 			return String.format("DATA: %s\n"
-					+ "DEPÓSITO DE R$ %.2f", DataUtil.dataFormatada(data.getTime()), valor);
+					+ "DEPÓSITO DE R$ %.2f", dataUtil.dataFormatada(data.getTime()), valor);
 		}
 	}
 
