@@ -43,11 +43,11 @@ public class DBService {
 
 		bancoService.saveAll(Arrays.asList(b1, b2, b3, b4));
 
-		Agencia b1_ag1 = new Agencia("0000-0", "Banco do Brasil Centro", b1);
-		Agencia b1_ag2 = new Agencia("0000-0", "Banco do Brasil Sul", b1);
+		Agencia b1_ag1 = new Agencia("0001-1", "Banco do Brasil Centro", b1);
+		Agencia b1_ag2 = new Agencia("0002-1", "Banco do Brasil Sul", b1);
 
-		Agencia b2_ag1 = new Agencia("0000-0", "Caixa Av. Miguel Rosa", b2);
-		Agencia b2_ag2 = new Agencia("0000-0", "Caixa Av. Frei Serafim", b2);
+		Agencia b2_ag1 = new Agencia("0001-1", "Caixa Av. Miguel Rosa", b2);
+		Agencia b2_ag2 = new Agencia("0002-1", "Caixa Av. Frei Serafim", b2);
 
 		agenciaService.saveAll(Arrays.asList(b1_ag1, b1_ag2, b2_ag1, b2_ag2));
 

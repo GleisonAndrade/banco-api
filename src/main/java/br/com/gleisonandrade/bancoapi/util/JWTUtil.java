@@ -25,12 +25,12 @@ public class JWTUtil {
 	@Value("${jwt.expiration}")
 	private Long expiration;
 
-	private Long getExpiration() {
-		return expiration * 1000;
-	}
+//	private Long getExpiration() {
+//		return expiration * 1000;
+//	}
 
 	public String generateToken(String cpf) {
-		return Jwts.builder().setSubject(cpf).setExpiration(new Date(System.currentTimeMillis() + getExpiration()))
+		return Jwts.builder().setSubject(cpf).setExpiration(new Date(System.currentTimeMillis() + expiration))
 				.signWith(SignatureAlgorithm.HS512, secret.getBytes()).compact();
 	}
 
@@ -39,6 +39,7 @@ public class JWTUtil {
 
 		if (claims != null) {
 			String cpf = claims.getSubject();
+			
 			Date expirationDate = claims.getExpiration();
 			Date now = new Date(System.currentTimeMillis());
 

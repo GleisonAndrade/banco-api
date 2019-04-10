@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import br.com.gleisonandrade.bancoapi.security.JWTAuthenticationFilter;
+import br.com.gleisonandrade.bancoapi.security.JWTAuthorizationFilter;
 import br.com.gleisonandrade.bancoapi.util.JWTUtil;
 
 /**
@@ -64,6 +65,8 @@ public class SegurancaConfig extends WebSecurityConfigurerAdapter {
 			.anyRequest().authenticated();
 		
 		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
+		
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 	
