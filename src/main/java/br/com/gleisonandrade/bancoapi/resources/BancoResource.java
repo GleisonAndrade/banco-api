@@ -46,7 +46,6 @@ public class BancoResource {
 	@Autowired
 	private AgenciaService agenciaService;
 
-	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping
 	public ResponseEntity<List<BancoDTO>> listar() {
 		List<Banco> bancos = bancoService.listarTodos();
@@ -55,7 +54,6 @@ public class BancoResource {
 		return ResponseEntity.ok(bancosDTO);
 	}
 
-	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/{id}")
 	public ResponseEntity<Banco> buscar(@PathVariable Long id) {
 		Banco bancoBuscado = bancoService.buscar(id);
@@ -95,7 +93,6 @@ public class BancoResource {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/page")
 	public ResponseEntity<Page<BancoDTO>> buscaPaginada(
 			@RequestParam(value="page", defaultValue="0") Integer page, 
@@ -109,7 +106,6 @@ public class BancoResource {
 		return ResponseEntity.ok().body(listDto);
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/{id}/agencia")
 	public ResponseEntity<List<AgenciaDTO>> buscarAgencias(@PathVariable Long id) {
 		List<Agencia> agencias = agenciaService.buscarPorBanco(id);
@@ -118,7 +114,6 @@ public class BancoResource {
 		return ResponseEntity.ok(agenciasDTO);
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/{id}/agencia/{numero}")
 	public ResponseEntity<AgenciaDTO> buscarAgencia(@PathVariable Long id, @PathVariable String numero) {
 		Agencia agenciaBuscada = agenciaService.buscarPorNumero(id, numero);
