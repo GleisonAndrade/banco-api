@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.com.gleisonandrade.bancoapi.domain.enuns.Perfil;
+import br.com.gleisonandrade.bancoapi.dto.NovoClienteDTO;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -67,6 +68,14 @@ public class Cliente implements Serializable{
 		this.nome = nome;
 		this.cpf = cpf;
 		this.senha = senha;
+	}
+
+	public Cliente(NovoClienteDTO novoClienteDto) {
+		super();
+		this.nome = novoClienteDto.getNome();
+		this.cpf = novoClienteDto.getCpf();
+		this.senha = novoClienteDto.getSenha();
+		addPerfil(Perfil.CLIENTE);
 	}
 
 	public Long getId() {

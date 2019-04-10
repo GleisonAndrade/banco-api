@@ -5,10 +5,13 @@ package br.com.gleisonandrade.bancoapi.services;
 
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.gleisonandrade.bancoapi.domain.Cliente;
+import br.com.gleisonandrade.bancoapi.dto.NovoClienteDTO;
 import br.com.gleisonandrade.bancoapi.repositories.ClienteRepository;
 import br.com.gleisonandrade.bancoapi.services.exceptions.ObjetoNaoEncontradoException;
 
@@ -61,6 +64,10 @@ public class ClienteService extends GenericServiceImpl<Cliente, Long> {
 		Optional<Cliente> cliente = clienteRepository.buscarPorCpf(cpf);
 
 		return cliente.orElseThrow(() -> new ObjetoNaoEncontradoException("Cliente não encontrado! CPF: " + cpf));
+	}
+
+	public Cliente converteNovoClienteDTOEmEntidade(@Valid NovoClienteDTO novoClienteDto) {
+		return new Cliente(novoClienteDto);
 	}
 
 }

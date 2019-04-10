@@ -21,8 +21,7 @@ public class NovaContaDTO implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
-	@NotNull(message="Preenchimento obrigatório")
-	
+	@NotNull(message="Preenchimento obrigatório")	
 	private Long bancoId;
 	
 	@NotEmpty(message="Preenchimento obrigatório")
