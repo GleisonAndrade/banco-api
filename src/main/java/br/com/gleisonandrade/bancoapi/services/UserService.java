@@ -45,4 +45,20 @@ public class UserService {
 		return validaClienteConta(contaService.buscar(key));		
 	}
 
+	public void validaClienteId(Long key) {
+		UserDetailsImpl user = getUserDetails();
+
+		if (user == null || !user.hasRole(Perfil.ADMIN) && !key.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}		
+	}
+
+	public void validaClienteCpf(String cpf) {
+		UserDetailsImpl user = getUserDetails();
+
+		if (user == null || !user.hasRole(Perfil.ADMIN) && !cpf.equals(user.getUsername())) {
+			throw new AuthorizationException("Acesso negado");
+		}		
+	}
+
 }

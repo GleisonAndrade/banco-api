@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.gleisonandrade.bancoapi.domain.Cliente;
-import br.com.gleisonandrade.bancoapi.domain.enuns.Perfil;
 import br.com.gleisonandrade.bancoapi.repositories.ClienteRepository;
-import br.com.gleisonandrade.bancoapi.security.UserDetailsImpl;
-import br.com.gleisonandrade.bancoapi.services.exceptions.AuthorizationException;
 import br.com.gleisonandrade.bancoapi.services.exceptions.ObjetoNaoEncontradoException;
 
 /**
@@ -24,6 +21,9 @@ public class ClienteService extends GenericServiceImpl<Cliente, Long> {
 
 	@Autowired
 	private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private UserService userService;
 
 	public ClienteService(ClienteRepository clienteRepository) {
 		super(clienteRepository);
@@ -51,21 +51,12 @@ public class ClienteService extends GenericServiceImpl<Cliente, Long> {
 
 	@Override
 	public Cliente buscar(Long key) {
-		UserDetailsImpl user = UserService.autenticar();
-
-		if (user == null || !user.hasRole(Perfil.ADMIN) && !key.equals(user.getId())) {
-			throw new AuthorizationException("Acesso negado");
-		}
-		
+		userService.validaClienteId(key);
 		return super.buscar(key);
 	}
 
 	public Cliente buscarPorCpf(String cpf) {
-		UserDetailsImpl user = UserService.autenticar();
-
-		if (user == null || !user.hasRole(Perfil.ADMIN) && !cpf.equals(user.getUsername())) {
-			throw new AuthorizationException("Acesso negado");
-		}
+		userService.validaClienteCpf(cpf);
 
 		Optional<Cliente> cliente = clienteRepository.buscarPorCpf(cpf);
 
