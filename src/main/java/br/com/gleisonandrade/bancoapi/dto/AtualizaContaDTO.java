@@ -16,7 +16,7 @@ import br.com.gleisonandrade.bancoapi.domain.Conta;
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
  *
  */
-public class ContaDTO implements Serializable{
+public class AtualizaContaDTO implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -31,30 +31,10 @@ public class ContaDTO implements Serializable{
 	@NotNull(message="Preenchimento obrigatório")
 	private Double saldo;
 	
-	private String bancoNome;
-	private String agenciaNome;
-	private String agenciaNumero;
-	
-	public ContaDTO(Conta conta) {
+	public AtualizaContaDTO(Conta conta) {
 		this.numero = conta.getNumero();
 		this.tipo = conta.getTipo().name();
 		this.saldo = conta.getSaldo();
-		
-		inicializaCampos(conta);
-	}
-
-	/**
-	 * @param conta
-	 */
-	private void inicializaCampos(Conta conta) {
-		if (conta.getAgencia() != null) {
-			this.agenciaNome = conta.getAgencia().getNome();
-			this.agenciaNumero = conta.getAgencia().getNumero();
-			
-			if (conta.getAgencia().getBanco() != null) {
-				this.bancoNome = conta.getAgencia().getBanco().getNome();
-			}
-		}
 	}
 
 	public String getNumero() {
@@ -64,7 +44,7 @@ public class ContaDTO implements Serializable{
 	public void setNumero(String numero) {
 		this.numero = numero;
 	}
-	
+
 	public String getTipo() {
 		return tipo;
 	}
@@ -81,27 +61,4 @@ public class ContaDTO implements Serializable{
 		this.saldo = saldo;
 	}
 
-	public String getBancoNome() {
-		return bancoNome;
-	}
-
-	public void setBancoNome(String bancoNome) {
-		this.bancoNome = bancoNome;
-	}
-
-	public String getAgenciaNome() {
-		return agenciaNome;
-	}
-
-	public void setAgenciaNome(String agenciaNome) {
-		this.agenciaNome = agenciaNome;
-	}
-
-	public String getAgenciaNumero() {
-		return agenciaNumero;
-	}
-
-	public void setAgenciaNumero(String agenciaNumero) {
-		this.agenciaNumero = agenciaNumero;
-	}
 }

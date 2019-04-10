@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.gleisonandrade.bancoapi.domain.Conta;
+import br.com.gleisonandrade.bancoapi.dto.AtualizaContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.ContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.DepositoDTO;
 import br.com.gleisonandrade.bancoapi.dto.NovaContaDTO;
@@ -51,14 +52,15 @@ public class ContaResource {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Conta> buscar(@PathVariable Long id) {
-		Conta contaBuscado = contaService.buscar(id);
+	public ResponseEntity<ContaDTO> buscar(@PathVariable Long id) {
+		Conta contaBuscada = contaService.buscar(id);
+		ContaDTO contaDTO = new ContaDTO(contaBuscada);
 
-		if (contaBuscado == null) {
+		if (contaBuscada == null) {
 			return ResponseEntity.notFound().build();
 		}
 
-		return ResponseEntity.ok(contaBuscado);
+		return ResponseEntity.ok(contaDTO);
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
@@ -74,7 +76,7 @@ public class ContaResource {
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody ContaDTO contaDto) {
+	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody AtualizaContaDTO contaDto) {
 		Conta contaBuscada = contaService.converteDTOEmEntidade(contaDto);
 		contaBuscada.setId(id);
 		contaBuscada = contaService.atualizar(contaBuscada);

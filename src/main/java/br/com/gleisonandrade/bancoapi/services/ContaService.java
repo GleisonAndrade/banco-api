@@ -20,6 +20,7 @@ import br.com.gleisonandrade.bancoapi.domain.Conta;
 import br.com.gleisonandrade.bancoapi.domain.enuns.Perfil;
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoDeConta;
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoOperacao;
+import br.com.gleisonandrade.bancoapi.dto.AtualizaContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.ContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.DepositoDTO;
 import br.com.gleisonandrade.bancoapi.dto.NovaContaDTO;
@@ -126,16 +127,21 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 	}
 
 	public Conta converteDTOEmEntidade(ContaDTO contaDto) {
-		return new Conta(contaDto.getId(), contaDto.getNumero(), TipoDeConta.valueOf(contaDto.getTipo()),
+		return new Conta(contaDto.getNumero(), TipoDeConta.valueOf(contaDto.getTipo()),
 				contaDto.getSaldo());
 	}
+	
+	public Conta converteDTOEmEntidade(AtualizaContaDTO atualizaContaDto) {
+		return new Conta(atualizaContaDto.getNumero(), TipoDeConta.valueOf(atualizaContaDto.getTipo()),
+				atualizaContaDto.getSaldo());
+	}
 
-	public Conta converteDTOEmEntidade(NovaContaDTO contaDto) {
-		Conta conta = new Conta(contaDto.getNumero(), TipoDeConta.valueOf(contaDto.getTipo()),
-				contaDto.getSaldo());
+	public Conta converteDTOEmEntidade(NovaContaDTO novaContaDto) {
+		Conta conta = new Conta(novaContaDto.getNumero(), TipoDeConta.valueOf(novaContaDto.getTipo()),
+				novaContaDto.getSaldo());
 
-		Cliente cliente = new Cliente(contaDto.getNome(), contaDto.getCpf(), bCryptPasswordEncoder.encode(contaDto.getSenha()));
-		Agencia agencia = agenciaService.buscarPorNumero(contaDto.getBancoId(), contaDto.getAgenciaNumero());
+		Cliente cliente = new Cliente(novaContaDto.getNome(), novaContaDto.getCpf(), bCryptPasswordEncoder.encode(novaContaDto.getSenha()));
+		Agencia agencia = agenciaService.buscarPorNumero(novaContaDto.getBancoId(), novaContaDto.getAgenciaNumero());
 
 		conta.setCliente(cliente);
 		conta.setAgencia(agencia);
@@ -252,4 +258,5 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 		
 		return contaOrigem;
 	}
+	
 }
