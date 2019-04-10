@@ -33,16 +33,25 @@ import br.com.gleisonandrade.bancoapi.services.exceptions.ObjetoNaoEncontradoExc
 public class ContaService extends GenericServiceImpl<Conta, Long> {
 	@Autowired
 	private ContaRepository contaRepository;
+	
 	@Autowired
 	private AgenciaService agenciaService;
+	
 	@Autowired
 	private ClienteService clienteService;
+	
 	@Autowired
 	private BancoService bancoService;
+	
 	@Autowired
 	private ExtratoService extratoService;
+	
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired
+	private UserService userService;
+
 
 	public ContaService(ContaRepository contaRepository) {
 		super(contaRepository);
@@ -52,6 +61,8 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 	@Override
 	public Conta buscar(Long key) {
 		Optional<Conta> conta = contaRepository.findById(key);
+		
+		userService.validaClienteConta(key);
 
 		return conta.orElseThrow(() -> new ObjetoNaoEncontradoException(
 				"Objeto não encontrado! Id: " + key + ", Tipo: " + Conta.class.getName()));
@@ -149,20 +160,25 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 
 	public Conta sacar(SaqueDTO saqueDto) {
 		Conta conta = verificaConta(saqueDto.getContaNumero(), saqueDto.getAgenciaNumero(), saqueDto.getBancoId());
-
+		
+		userService.validaClienteConta(conta);
+		
 		return debitar(conta, saqueDto.getValor());
 	}
 
+	
+
 	public Conta depositar(DepositoDTO depositoDTO) {
-		Conta conta = verificaConta(depositoDTO.getContaNumero(), depositoDTO.getAgenciaNumero(),
-				depositoDTO.getBancoId());
+		Conta conta = verificaConta(depositoDTO.getContaNumero(), depositoDTO.getAgenciaNumero(), depositoDTO.getBancoId());
 
 		return creditar(conta, depositoDTO.getValor());
 	}
 
 	public Conta transferir(TransferenciaDTO transferenciaDTO) {
-		Conta contaOrigem = verificaConta(transferenciaDTO.getContaOrigemNumero(),
-				transferenciaDTO.getAgenciaOrigemNumero(), transferenciaDTO.getBancoOrigemId());
+		Conta contaOrigem = verificaConta(transferenciaDTO.getContaOrigemNumero(), transferenciaDTO.getAgenciaOrigemNumero(), transferenciaDTO.getBancoOrigemId());
+		
+		userService.validaClienteConta(contaOrigem);
+		
 		Conta contaDestino = verificaConta(transferenciaDTO.getContaDestinoNumero(),
 				transferenciaDTO.getAgenciaDestinoNumero(), transferenciaDTO.getBancoDestinoId());
 

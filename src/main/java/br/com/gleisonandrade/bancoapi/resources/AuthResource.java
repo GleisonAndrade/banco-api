@@ -18,10 +18,13 @@ public class AuthResource {
 
 	@Autowired
 	private JWTUtil jwtUtil;
+	
+	@Autowired
+	private UserService userService;
 
 	@PostMapping("/refresh_token")
 	public ResponseEntity<Void> refreshToken(HttpServletResponse response) {
-		UserDetailsImpl user = UserService.autenticar();
+		UserDetailsImpl user = userService.getUserDetails();
 		
 		String token = jwtUtil.generateToken(user.getUsername());
 		response.addHeader("Authorization", "Bearer " + token);
