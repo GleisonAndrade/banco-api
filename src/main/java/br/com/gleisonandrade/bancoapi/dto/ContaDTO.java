@@ -20,6 +20,8 @@ public class ContaDTO implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
+	private Long id;
+	
 	@NotEmpty(message="Preenchimento obrigatório")
 	@Pattern(regexp="\\d{5}-\\d{1}", message="O número da conta deve possuir o seguinte formato 00000-0 e ser formado apenas por números!")
 	private String numero;
@@ -36,6 +38,7 @@ public class ContaDTO implements Serializable{
 	private String agenciaNumero;
 	
 	public ContaDTO(Conta conta) {
+		this.id = conta.getId();
 		this.numero = conta.getNumero();
 		this.tipo = conta.getTipo().name();
 		this.saldo = conta.getSaldo();
@@ -55,6 +58,14 @@ public class ContaDTO implements Serializable{
 				this.bancoNome = conta.getAgencia().getBanco().getNome();
 			}
 		}
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getNumero() {

@@ -25,13 +25,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.gleisonandrade.bancoapi.domain.Conta;
+import br.com.gleisonandrade.bancoapi.domain.Extrato;
 import br.com.gleisonandrade.bancoapi.dto.AtualizaContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.ContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.DepositoDTO;
+import br.com.gleisonandrade.bancoapi.dto.ExtratoDTO;
 import br.com.gleisonandrade.bancoapi.dto.NovaContaDTO;
 import br.com.gleisonandrade.bancoapi.dto.SaqueDTO;
 import br.com.gleisonandrade.bancoapi.dto.TransferenciaDTO;
 import br.com.gleisonandrade.bancoapi.services.ContaService;
+import br.com.gleisonandrade.bancoapi.services.ExtratoService;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -42,6 +45,9 @@ import br.com.gleisonandrade.bancoapi.services.ContaService;
 public class ContaResource {
 	@Autowired
 	private ContaService contaService;
+	
+	@Autowired
+	private ExtratoService extratoService;
 
 	@GetMapping
 	public ResponseEntity<List<ContaDTO>> listar() {
@@ -117,6 +123,22 @@ public class ContaResource {
 				.expand(conta.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
+	
+	@GetMapping("/{id}/extrato/")
+	public ResponseEntity<List<ExtratoDTO>> extratos(@PathVariable Long id){
+		List<Extrato> extratos = extratoService.listarTodosPorContaId(id);
+		List<ExtratoDTO> extratosDTO = extratos.stream().map(extrato -> new ExtratoDTO(extrato)).collect(Collectors.toList());
+
+		return ResponseEntity.ok(extratosDTO);
+	}
+	
+	@GetMapping("/{id}/extrato/{extratoId}")
+	public ResponseEntity<ExtratoDTO> extrato(@PathVariable Long id, @PathVariable Long extratoId){
+		Extrato extrato = extratoService.buscar(id, extratoId);
+		ExtratoDTO extratoDTO = new ExtratoDTO(extrato);
+
+		return ResponseEntity.ok(extratoDTO);
+	}	
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/page")

@@ -92,4 +92,8 @@ public class ExtratoService extends GenericServiceImpl<Extrato, Long>{
 		return extratoRepository.listarTodosPorContaId(id);
 	}
 
+	public Extrato buscar(Long id, Long extratoId) {
+		userService.validaClienteConta(id);
+		return buscar(extratoId);
+	}
 }
