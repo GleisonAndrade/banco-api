@@ -3,6 +3,7 @@
  */
 package br.com.gleisonandrade.bancoapi.repositories.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -14,6 +15,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import br.com.gleisonandrade.bancoapi.domain.Cliente;
 import br.com.gleisonandrade.bancoapi.domain.Conta;
 import br.com.gleisonandrade.bancoapi.repositories.custom.ContaRepositoryCustom;
 
@@ -93,6 +95,29 @@ public class ContaRepositoryCustomImpl implements ContaRepositoryCustom {
 
 		try {
 			return Optional.of(tq.getSingleResult());
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public Optional<List<Conta>> buscarPorCliente(Cliente cliente) {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Conta> cq = cb.createQuery(Conta.class);
+
+		Root<Conta> root = cq.from(Conta.class);
+		CriteriaQuery<Conta> query = cq.select(root);
+
+		Predicate predicado = cb.equal(root.get("cliente").get("id"), cliente.getId());
+
+		Predicate[] predicates = { predicado };
+
+		query.where(predicates);
+
+		TypedQuery<Conta> tq = entityManager.createQuery(query);
+
+		try {
+			return Optional.of(tq.getResultList());
 		} catch (NoResultException e) {
 			return null;
 		}

@@ -53,6 +53,10 @@ public class SegurancaConfig extends WebSecurityConfigurerAdapter {
 			"/banco/**"
 	};
 	
+	private static final String[] PUBLIC_MATCHERS_POST = { 
+			"/conta/depositar"
+	};	
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
@@ -62,6 +66,7 @@ public class SegurancaConfig extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable();
 		
 		http.authorizeRequests()
+			.antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
 			.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
 			.antMatchers(PUBLIC_MATCHERS).permitAll()
 			.anyRequest().authenticated();

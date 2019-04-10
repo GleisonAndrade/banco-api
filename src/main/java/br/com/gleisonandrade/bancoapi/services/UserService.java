@@ -60,5 +60,15 @@ public class UserService {
 			throw new AuthorizationException("Acesso negado");
 		}		
 	}
+	
+	public boolean hasRole(Perfil perfil) {
+		UserDetailsImpl user = getUserDetails();
+		
+		if (user == null) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
+		return user.hasRole(perfil);
+	}
 
 }

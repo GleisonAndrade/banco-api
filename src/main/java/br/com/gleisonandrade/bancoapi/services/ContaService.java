@@ -3,16 +3,21 @@
  */
 package br.com.gleisonandrade.bancoapi.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.gleisonandrade.bancoapi.domain.Agencia;
 import br.com.gleisonandrade.bancoapi.domain.Cliente;
 import br.com.gleisonandrade.bancoapi.domain.Conta;
+import br.com.gleisonandrade.bancoapi.domain.enuns.Perfil;
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoDeConta;
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoOperacao;
 import br.com.gleisonandrade.bancoapi.dto.ContaDTO;
@@ -56,6 +61,30 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 	public ContaService(ContaRepository contaRepository) {
 		super(contaRepository);
 		this.contaRepository = contaRepository;
+	}
+	
+	@Override
+	public List<Conta> listarTodos() {
+		return buscarTodos().get();
+	}
+	
+	public Optional<List<Conta>> buscarTodos() {
+		if (userService.hasRole(Perfil.ADMIN)) {
+			return Optional.of(super.listarTodos());
+		}
+		
+		return contaRepository.buscarPorCliente(userService.getUserDetails().getCliente());
+	}
+	
+	@Override
+	public Page<Conta> buscaPaginada(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		
+		if (userService.hasRole(Perfil.ADMIN)) {
+			return contaRepository.findAll(pageRequest);
+		}
+		
+		return contaRepository.findByCliente(userService.getUserDetails().getCliente(), pageRequest);
 	}
 
 	@Override

@@ -42,7 +42,6 @@ public class ContaResource {
 	@Autowired
 	private ContaService contaService;
 
-	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping
 	public ResponseEntity<List<ContaDTO>> listar() {
 		List<Conta> contas = contaService.listarTodos();
