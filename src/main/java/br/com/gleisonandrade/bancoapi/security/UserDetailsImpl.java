@@ -27,6 +27,7 @@ public class UserDetailsImpl implements UserDetails{
 	private Long id;
 	private String cpf;
 	private String senha;
+	private String nome;
 	private Collection<? extends GrantedAuthority> authorities;
 	
 	public UserDetailsImpl(Cliente cliente) {
@@ -39,6 +40,10 @@ public class UserDetailsImpl implements UserDetails{
 
 	public Long getId() {
 		return id;
+	}
+	
+	public Cliente getCliente() {
+		return new Cliente(id, nome, cpf, senha);
 	}
 
 	@Override
