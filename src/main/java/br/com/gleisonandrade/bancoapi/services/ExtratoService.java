@@ -26,6 +26,9 @@ public class ExtratoService extends GenericServiceImpl<Extrato, Long>{
 	
 	@Autowired
 	private DataUtil dataUtil;
+
+	@Autowired
+	private UserService userService;
 	
 	public ExtratoService(ExtratoRepository extratoRepository) {
 		super(extratoRepository);
@@ -38,7 +41,7 @@ public class ExtratoService extends GenericServiceImpl<Extrato, Long>{
 		return null;
 	}
 	
-	public Extrato gerar(Boolean credito,Conta conta, TipoOperacao tipo, Double valor) {
+	public Extrato gerar(Boolean credito, Conta conta, TipoOperacao tipo, Double valor) {
 		return gerar(credito, conta, tipo, valor, null);
 	}
 
@@ -85,9 +88,8 @@ public class ExtratoService extends GenericServiceImpl<Extrato, Long>{
 	}
 
 	public List<Extrato> listarTodosPorContaId(Long id) {
+		userService.validaClienteConta(id);
 		return extratoRepository.listarTodosPorContaId(id);
 	}
-	
-	
 
 }
