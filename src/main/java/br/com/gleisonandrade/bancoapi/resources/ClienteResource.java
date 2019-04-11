@@ -28,6 +28,9 @@ import br.com.gleisonandrade.bancoapi.domain.Cliente;
 import br.com.gleisonandrade.bancoapi.dto.ClienteDTO;
 import br.com.gleisonandrade.bancoapi.dto.NovoClienteDTO;
 import br.com.gleisonandrade.bancoapi.services.ClienteService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -40,6 +43,10 @@ public class ClienteResource {
 	@Autowired
 	private ClienteService clienteService;
 	
+	@ApiOperation(value = "Mostra a lista de clientes cadastrados no sistema.", response = List.class)
+	@ApiResponses(value = {
+	    @ApiResponse(code = 200, message = "Lista de clientes recuperada com sucesso")
+	})
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping
 	public ResponseEntity<List<ClienteDTO>> listar() {
@@ -49,6 +56,10 @@ public class ClienteResource {
 		return ResponseEntity.ok(clientesDTO);
 	}
 	
+	@ApiOperation(value = "Mostra os dados do cliente com o id passado cadastrado no sistema.", response = ClienteDTO.class)
+	@ApiResponses(value = {
+	    @ApiResponse(code = 404, message = "Não existe cliente cadastrado no sistema com esse id")
+	})
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/{id}")
 	public ResponseEntity<ClienteDTO> buscar(@PathVariable Long id) {
@@ -61,6 +72,7 @@ public class ClienteResource {
 		return ResponseEntity.ok(new ClienteDTO(clienteBuscado));
 	}
 
+	@ApiOperation(value = "Cadastra um novo cliente no sistema.")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<Void> adicionar(@Valid @RequestBody NovoClienteDTO novoClienteDto) {
@@ -72,6 +84,7 @@ public class ClienteResource {
 		return ResponseEntity.created(uri).build();
 	}
 
+	@ApiOperation(value = "Atualiza um cliente no sistema.")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody NovoClienteDTO clienteDto) {
@@ -82,6 +95,7 @@ public class ClienteResource {
 		return ResponseEntity.noContent().build();
 	}
 
+	@ApiOperation(value = "Remove um cliente no sistema.")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
@@ -89,6 +103,7 @@ public class ClienteResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@ApiOperation(value = "Mostra a lista paginada de clientes cadastrados no sistema.", response = Page.class)
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/page")
 	public ResponseEntity<Page<ClienteDTO>> buscaPaginada(
