@@ -30,6 +30,7 @@ import br.com.gleisonandrade.bancoapi.dto.AgenciaDTO;
 import br.com.gleisonandrade.bancoapi.dto.BancoDTO;
 import br.com.gleisonandrade.bancoapi.services.AgenciaService;
 import br.com.gleisonandrade.bancoapi.services.BancoService;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -46,6 +47,7 @@ public class BancoResource {
 	@Autowired
 	private AgenciaService agenciaService;
 
+	@ApiOperation(value = "Mostra a lista de bancos cadastrados no sistema.", response = List.class)
 	@GetMapping
 	public ResponseEntity<List<BancoDTO>> listar() {
 		List<Banco> bancos = bancoService.listarTodos();
@@ -54,6 +56,7 @@ public class BancoResource {
 		return ResponseEntity.ok(bancosDTO);
 	}
 
+	@ApiOperation(value = "Mostra os dados de um banco com o id passado cadastrada no sistema.", response = AgenciaDTO.class)
 	@GetMapping("/{id}")
 	public ResponseEntity<Banco> buscar(@PathVariable Long id) {
 		Banco bancoBuscado = bancoService.buscar(id);
@@ -65,6 +68,7 @@ public class BancoResource {
 		return ResponseEntity.ok(bancoBuscado);
 	}
 
+	@ApiOperation(value = "Cadastra um novo banco no sistema.")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<Void> adicionar(@Valid @RequestBody BancoDTO bancoDto) {
@@ -76,6 +80,7 @@ public class BancoResource {
 		return ResponseEntity.created(uri).build();
 	}
 
+	@ApiOperation(value = "Atualiza um banco no sistema.")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody BancoDTO bancoDto) {
@@ -86,6 +91,7 @@ public class BancoResource {
 		return ResponseEntity.noContent().build();
 	}
 
+	@ApiOperation(value = "Remove um banco do sistema.")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
@@ -93,6 +99,7 @@ public class BancoResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@ApiOperation(value = "Mostra a lista paginada de bancos cadastrados no sistema.", response = Page.class)
 	@GetMapping("/page")
 	public ResponseEntity<Page<BancoDTO>> buscaPaginada(
 			@RequestParam(value="page", defaultValue="0") Integer page, 
@@ -106,6 +113,7 @@ public class BancoResource {
 		return ResponseEntity.ok().body(listDto);
 	}
 	
+	@ApiOperation(value = "Mostra a lista de agências de um banco especifico.", response = List.class)
 	@GetMapping("/{id}/agencia")
 	public ResponseEntity<List<AgenciaDTO>> buscarAgencias(@PathVariable Long id) {
 		List<Agencia> agencias = agenciaService.buscarPorBanco(id);
@@ -114,6 +122,7 @@ public class BancoResource {
 		return ResponseEntity.ok(agenciasDTO);
 	}
 	
+	@ApiOperation(value = "Mostra os dados de uma agência pelo número que pertence ao banco com o id passado cadastrada no sistema.", response = AgenciaDTO.class)
 	@GetMapping("/{id}/agencia/{numero}")
 	public ResponseEntity<AgenciaDTO> buscarAgencia(@PathVariable Long id, @PathVariable String numero) {
 		Agencia agenciaBuscada = agenciaService.buscarPorNumero(id, numero);
