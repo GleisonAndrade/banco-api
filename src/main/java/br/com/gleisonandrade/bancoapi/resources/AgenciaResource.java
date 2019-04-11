@@ -25,6 +25,7 @@ import br.com.gleisonandrade.bancoapi.domain.Agencia;
 import br.com.gleisonandrade.bancoapi.dto.AgenciaDTO;
 import br.com.gleisonandrade.bancoapi.dto.NovaAgenciaDTO;
 import br.com.gleisonandrade.bancoapi.services.AgenciaService;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -37,7 +38,7 @@ public class AgenciaResource {
 	@Autowired
 	private AgenciaService agenciaService;
 	
-	@PreAuthorize("hasAnyRole('ADMIN')")
+	@ApiOperation(value = "Mostra a lista de agencias cadastradas no sistema.", response = List.class)
 	@GetMapping
 	public ResponseEntity<List<AgenciaDTO>> listar() {
 		List<Agencia> agencias = agenciaService.listarTodos();
@@ -46,18 +47,19 @@ public class AgenciaResource {
 		return ResponseEntity.ok(agenciasDTO);
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN')")
+	@ApiOperation(value = "Mostra os dados de uma agência com o id passado cadastrada no sistema.", response = AgenciaDTO.class)
 	@GetMapping("/{id}")
-	public ResponseEntity<Agencia> buscar(@PathVariable Long id) {
-		Agencia agenciaBuscado = agenciaService.buscar(id);
+	public ResponseEntity<AgenciaDTO> buscar(@PathVariable Long id) {
+		Agencia agenciaBuscada = agenciaService.buscar(id);
 
-		if (agenciaBuscado == null) {
+		if (agenciaBuscada == null) {
 			return ResponseEntity.notFound().build();
 		}
 
-		return ResponseEntity.ok(agenciaBuscado);
+		return ResponseEntity.ok(new AgenciaDTO(agenciaBuscada));
 	}
 
+	@ApiOperation(value = "Cadastra uma nova agência no sistema.")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<Void> adicionar(@Valid @RequestBody NovaAgenciaDTO agenciaDto) {
@@ -69,6 +71,7 @@ public class AgenciaResource {
 		return ResponseEntity.created(uri).build();
 	}
 
+	@ApiOperation(value = "Atualiza uma agência no sistema.")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> atualizar(@PathVariable Long id, @Valid @RequestBody AgenciaDTO agenciaDto) {
@@ -79,6 +82,7 @@ public class AgenciaResource {
 		return ResponseEntity.noContent().build();
 	}
 
+	@ApiOperation(value = "Remove uma agência no sistema.")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> remover(@PathVariable Long id) {
@@ -86,7 +90,7 @@ public class AgenciaResource {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN')")
+	@ApiOperation(value = "Mostra a lista paginada de agencias cadastradas no sistema.", response = Page.class)
 	@GetMapping("/page")
 	public ResponseEntity<Page<AgenciaDTO>> buscaPaginada(
 			@RequestParam(value="page", defaultValue="0") Integer page, 

@@ -11,6 +11,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
 import br.com.gleisonandrade.bancoapi.domain.Agencia;
+import br.com.gleisonandrade.bancoapi.domain.Banco;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -20,8 +21,6 @@ public class AgenciaDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
-	
 	@NotEmpty(message="Preenchimento obrigatório")
 	@Pattern(regexp="\\d{4}-\\d{1}", message="O número da agência deve possuir o seguinte formato 0000-0 e ser formado apenas por números!")
 	private String numero;
@@ -30,10 +29,12 @@ public class AgenciaDTO implements Serializable {
 	@Length(min=3, max=250, message="O tamanho deve ser entre 3 e 250 caracteres")
 	private String nome;
 	
+	private Banco banco;
+	
 	public AgenciaDTO(Agencia agencia) {
-		this.id = agencia.getId();
 		this.numero = agencia.getNumero();
 		this.nome = agencia.getNome();
+		this.banco = agencia.getBanco();
 	}
 
 	/**
@@ -41,14 +42,6 @@ public class AgenciaDTO implements Serializable {
 	 */
 	public AgenciaDTO() {
 		super();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getNumero() {
@@ -65,6 +58,14 @@ public class AgenciaDTO implements Serializable {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public Banco getBanco() {
+		return banco;
+	}
+
+	public void setBanco(Banco banco) {
+		this.banco = banco;
 	}
 
 }
