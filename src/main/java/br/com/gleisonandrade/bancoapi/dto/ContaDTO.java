@@ -11,30 +11,42 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import br.com.gleisonandrade.bancoapi.domain.Conta;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
  *
  */
+@ApiModel(description="Todos os detalhes sobre a Conta. ")
 public class ContaDTO implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
+	@ApiModelProperty(notes = "ID da conta gerada automáticamente pelo banco de dado. s")
 	private Long id;
 	
+	@ApiModelProperty(notes = "Número da Conta. ")
 	@NotEmpty(message="Preenchimento obrigatório")
 	@Pattern(regexp="\\d{5}-\\d{1}", message="O número da conta deve possuir o seguinte formato 00000-0 e ser formado apenas por números!")
 	private String numero;
 	
+	@ApiModelProperty(notes = "O tipo de conta. (CORRENTE ou POUPANCA)")
 	@NotEmpty(message="Preenchimento obrigatório")
 	private String tipo;
 	
+	@ApiModelProperty(notes = "Saldo da Conta. ")
 	@Negative
 	@NotNull(message="Preenchimento obrigatório")
 	private Double saldo;
 	
+	@ApiModelProperty(notes = "Nome do Banco que a conta pertence. ")
 	private String bancoNome;
+	
+	@ApiModelProperty(notes = "Nome da Agencia que a conta pertence. ")
 	private String agenciaNome;
+	
+	@ApiModelProperty(notes = "Número da Agencia que a conta pertence. ")
 	private String agenciaNumero;
 	
 	public ContaDTO(Conta conta) {

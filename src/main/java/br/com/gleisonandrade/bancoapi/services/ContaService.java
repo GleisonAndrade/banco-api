@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import br.com.gleisonandrade.bancoapi.domain.Agencia;
 import br.com.gleisonandrade.bancoapi.domain.Cliente;
 import br.com.gleisonandrade.bancoapi.domain.Conta;
+import br.com.gleisonandrade.bancoapi.domain.Extrato;
 import br.com.gleisonandrade.bancoapi.domain.enuns.Perfil;
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoDeConta;
 import br.com.gleisonandrade.bancoapi.domain.enuns.TipoOperacao;
@@ -30,6 +31,7 @@ import br.com.gleisonandrade.bancoapi.repositories.ContaRepository;
 import br.com.gleisonandrade.bancoapi.services.exceptions.IntegridadeDeDadosException;
 import br.com.gleisonandrade.bancoapi.services.exceptions.NegocioException;
 import br.com.gleisonandrade.bancoapi.services.exceptions.ObjetoNaoEncontradoException;
+import br.com.gleisonandrade.bancoapi.util.ContaExtrato;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
@@ -180,6 +182,14 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 		throw new NegocioException("Já existe uma conta cadastrada na agência com o número informado!");
 	}
 
+	/**
+	 * Verifica a existência do banco e agência. Caso existam verifica se existe uma conta com o {@linkplain contaNumero} nesse banco e agência.
+	 * 
+	 * @param contaNumero Número da cnta que se deseja validar e buscar.
+	 * @param agenciaNumero Agência que a conta pertence.
+	 * @param bancoId Banco que possuí a agência.
+	 * @return
+	 */
 	public Conta verificaConta(String contaNumero, String agenciaNumero, Long bancoId) {
 		// Verifiar se banco existe
 		bancoService.buscar(bancoId);
@@ -193,23 +203,27 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 		return conta;
 	}
 
-	public Conta sacar(SaqueDTO saqueDto) {
+	public ContaExtrato sacar(SaqueDTO saqueDto) {
 		Conta conta = verificaConta(saqueDto.getContaNumero(), saqueDto.getAgenciaNumero(), saqueDto.getBancoId());
 		
 		userService.validaClienteConta(conta);
 		
-		return debitar(conta, saqueDto.getValor());
+		Extrato extrato = debitar(conta, saqueDto.getValor());
+		
+		return new ContaExtrato(conta.getId(), extrato.getId());
 	}
 
 	
 
-	public Conta depositar(DepositoDTO depositoDTO) {
+	public ContaExtrato depositar(DepositoDTO depositoDTO) {
 		Conta conta = verificaConta(depositoDTO.getContaNumero(), depositoDTO.getAgenciaNumero(), depositoDTO.getBancoId());
 
-		return creditar(conta, depositoDTO.getValor());
+		Extrato extrato = creditar(conta, depositoDTO.getValor());
+		
+		return new ContaExtrato(conta.getId(), extrato.getId());
 	}
 
-	public Conta transferir(TransferenciaDTO transferenciaDTO) {
+	public ContaExtrato transferir(TransferenciaDTO transferenciaDTO) {
 		Conta contaOrigem = verificaConta(transferenciaDTO.getContaOrigemNumero(), transferenciaDTO.getAgenciaOrigemNumero(), transferenciaDTO.getBancoOrigemId());
 		
 		userService.validaClienteConta(contaOrigem);
@@ -217,21 +231,23 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 		Conta contaDestino = verificaConta(transferenciaDTO.getContaDestinoNumero(),
 				transferenciaDTO.getAgenciaDestinoNumero(), transferenciaDTO.getBancoDestinoId());
 
-		return transferir(contaOrigem, contaDestino, transferenciaDTO.getValor());		
+		ContaExtrato extrato = transferir(contaOrigem, contaDestino, transferenciaDTO.getValor());
+		
+		return extrato;
 	}
 	
-	private Conta debitar(Conta conta, Double valor) {
+	private Extrato debitar(Conta conta, Double valor) {
 		return debitar(conta, valor, null, null);
 	}
 
-	private Conta debitar(Conta conta, Double valor, TipoOperacao tipo, Conta contaDestino) {
+	private Extrato debitar(Conta conta, Double valor, TipoOperacao tipo, Conta contaDestino) {
 		if (valor <= conta.getSaldo()) {
 			conta.setSaldo(conta.getSaldo() - valor);
 			conta = contaRepository.save(conta);
 
-			extratoService.gerar(false, conta, tipo == null ? TipoOperacao.SAQUE : tipo, valor, contaDestino);
+			Extrato extratoDebito = extratoService.gerar(false, conta, tipo == null ? TipoOperacao.SAQUE : tipo, valor, contaDestino);
 
-			return conta;
+			return extratoDebito;
 		}
 
 		throw new NegocioException(
@@ -239,24 +255,24 @@ public class ContaService extends GenericServiceImpl<Conta, Long> {
 						conta.getSaldo(), valor));
 	}
 	
-	private Conta creditar(Conta conta, Double valor) {
+	private Extrato creditar(Conta conta, Double valor) {
 		return creditar(conta, valor, null, null);
 	}
 
-	private Conta creditar(Conta conta, Double valor, TipoOperacao tipo, Conta contaOrigem) {
+	private Extrato creditar(Conta conta, Double valor, TipoOperacao tipo, Conta contaOrigem) {
 		conta.setSaldo(conta.getSaldo() + valor);
 		conta = contaRepository.save(conta);
 
-		extratoService.gerar(true, conta, tipo == null ? TipoOperacao.DEPOSITO : tipo, valor, contaOrigem);
+		Extrato extratoCredito = extratoService.gerar(true, conta, tipo == null ? TipoOperacao.DEPOSITO : tipo, valor, contaOrigem);
 
-		return conta;
+		return extratoCredito;
 	}
 	
-	private Conta transferir(Conta contaOrigem, Conta contaDestino, Double valor) {
-		contaOrigem = debitar(contaOrigem, valor, TipoOperacao.TRANSFERENCIA, contaDestino);
-		contaDestino = creditar(contaDestino, valor, TipoOperacao.TRANSFERENCIA, contaOrigem);
+	private ContaExtrato transferir(Conta contaOrigem, Conta contaDestino, Double valor) {
+		Extrato extratoDebito = debitar(contaOrigem, valor, TipoOperacao.TRANSFERENCIA, contaDestino);
+		/**Extrato extratoCredito =**/ creditar(contaDestino, valor, TipoOperacao.TRANSFERENCIA, contaOrigem);
 		
-		return contaOrigem;
+		return new ContaExtrato(contaOrigem.getId(), extratoDebito.getId());
 	}
 	
 }
