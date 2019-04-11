@@ -48,9 +48,9 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(NegocioException.class)
 	public ResponseEntity<StandardError> dataIntegrity(NegocioException e, HttpServletRequest request) {
 
-		StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+		StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.UNPROCESSABLE_ENTITY.value(),
 				"Erro de negócio", e.getMessage(), request.getRequestURI());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
 	}
 	
 
