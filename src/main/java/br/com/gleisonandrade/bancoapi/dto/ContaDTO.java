@@ -23,7 +23,7 @@ public class ContaDTO implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ApiModelProperty(notes = "ID da conta gerada automáticamente pelo banco de dado. s")
+	@ApiModelProperty(notes = "ID da conta gerada automáticamente pelo banco de dado.")
 	private Long id;
 	
 	@ApiModelProperty(notes = "Número da Conta. ")

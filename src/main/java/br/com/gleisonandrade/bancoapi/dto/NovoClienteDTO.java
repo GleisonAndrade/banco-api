@@ -7,19 +7,26 @@ import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.br.CPF;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
  *
  */
+@ApiModel(description="Detalhes sobre o cliente para cadastro. ")
 public class NovoClienteDTO {
 	
+	@ApiModelProperty(notes = "Nome do cliente. ")
 	@NotEmpty(message="Preenchimento obrigatório")
 	private String nome;
 	
+	@ApiModelProperty(notes = "Cpf do cliente. ")
 	@NotEmpty(message="Preenchimento obrigatório")
 	@CPF(message="O CPF informado é inválido")
 	private String cpf;
 	
+	@ApiModelProperty(notes = "Senha do cliente. ")
 	@NotEmpty(message="Preenchimento obrigatório")
 	private String senha;
 	

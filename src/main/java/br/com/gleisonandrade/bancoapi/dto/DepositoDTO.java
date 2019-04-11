@@ -10,28 +10,37 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
  *
  */
+@ApiModel(description="Todos os dados sobre a Conta necessários para realizar depósito. ")
 public class DepositoDTO implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
+	@ApiModelProperty(notes = "Id do banco que a conta pertence. ")
 	@NotNull(message="Preenchimento obrigatório")
 	private Long bancoId;
 	
+	@ApiModelProperty(notes = "Número da Agencia que a conta pertence. ")
 	@NotEmpty(message="Preenchimento obrigatório")
 	private String agenciaNumero;
 	
+	@ApiModelProperty(notes = "Número da conta. ")
 	@NotEmpty(message="Preenchimento obrigatório")
 	@Pattern(regexp="\\d{5}-\\d{1}", message="O número da conta deve possuir o seguinte formato 00000-0 e ser formado apenas por números!")
 	private String contaNumero;
 	
+	@ApiModelProperty(notes = "O tipo de conta. (CORRENTE ou POUPANCA)")
 	@NotEmpty(message="Preenchimento obrigatório")
 //	@Pattern(regexp="/([POUPANCA|CORRENTE])/g", message="O valor informado é inválido, era esperado CORRENTE ou POUPANCA")
 	private String tipo;
 	
+	@ApiModelProperty(notes = "Valor da transferência. ")
 	@Positive(message="O valor deve ser maior que zero")
 	@NotNull(message="Preenchimento obrigatório")
 	private Double valor;

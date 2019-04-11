@@ -10,11 +10,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.com.gleisonandrade.bancoapi.domain.Conta;
 import br.com.gleisonandrade.bancoapi.domain.Extrato;
+import io.swagger.annotations.ApiModel;
 
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
  *
  */
+@ApiModel(description="Todos os dados sobre o extrato de uma Conta. ")
 public class ExtratoDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
