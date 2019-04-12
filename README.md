@@ -26,7 +26,7 @@ Primeiro é necessário iniciar seu banco de dados MySQL. É necessário criar a
 #### application.properties
 ```
 #Servidor Web
-server.port=8090
+server.port=8080
 
 #Path principal
 server.servlet.context-path=/banco-api
