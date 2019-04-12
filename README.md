@@ -74,6 +74,10 @@ spring.jpa.properties.hibernate.format_sql=true
 # No JDBC URL: jdbc:h2:file:~/test
 ```
 
+**OBSERVAÇÃO:** Somente os profiles ``dev'' e ``test`` persistem um usuário admin no sistema, caso utilize o profile prod, será necessário inserir um admin diretamente no banco de dados. Propriedade ``spring.profiles.active=prod``. 
+- CPF: 952.797.143-80
+- Senha: 123456
+
 **1. Clonando o repositório** 
 
 ```bash
