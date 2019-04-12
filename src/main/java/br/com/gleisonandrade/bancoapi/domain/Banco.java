@@ -10,10 +10,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * @author <a href="malito:gleisondeandradeesilva@gmail.com">Gleison Andrade</a>
  *
  */
+
+@ApiModel(description="Entidade Banco do sistema. ")
 @Entity
 public class Banco implements Serializable{
 	
@@ -22,10 +27,12 @@ public class Banco implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	@ApiModelProperty(notes = "Id do banco que a conta pertence. ")
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@ApiModelProperty(notes = "Nome do Banco. ")
 	private String nome;
 	
 	public Banco() {
